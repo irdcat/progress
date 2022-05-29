@@ -1,9 +1,15 @@
 <script lang="ts">
-    import Button, { Label } from "@smui/button";
+    import Router from "svelte-spa-router";
+
+    import Home from "./pages/Home.svelte";
+    import Exercises from "./pages/Exercises.svelte";
+
+    const routes = {
+        "/": Home,
+        "/exercises": Exercises
+    };
 </script>
 
 <main>
-    <Button variant="unelevated" on:click={() => (alert("Clicked!"))}>
-        <Label>Click me!</Label>
-    </Button>
+    <Router {routes}/>
 </main>
