@@ -3,13 +3,17 @@
 
     import Home from "./pages/Home.svelte";
     import Exercises from "./pages/Exercises.svelte";
+    import ExerciseDetails from "./pages/ExerciseDetails.svelte";
 
     const routes = {
         "/": Home,
-        "/exercises": Exercises
+        "/exercises": Exercises,
+        "/exercises/:id/details": ExerciseDetails
     };
 </script>
 
 <main>
-    <Router {routes}/>
+    <div class="m-auto max-w-5xl">
+        <Router {routes}/>
+    </div>
 </main>
