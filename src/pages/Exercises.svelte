@@ -1,6 +1,4 @@
 <script lang="ts">
-    import List, { Item, Text, Meta, Label as ItemLabel } from "@smui/list";
-    import Button, { Label as ButtonLabel } from "@smui/button";
     import { push } from "svelte-spa-router";
 
     function goToExerciseEdit(exerciseId) {
@@ -22,26 +20,23 @@
     ];
 </script>
 
-<style>
-    .list-container {
-        max-width: 600px;
-    }
-</style>
-
-<div class="list-container">
-    <List nonInteractive>
-        {#each exercises as {id, name}, index (id)}
-            <Item>
-                <ItemLabel>{name}</ItemLabel>
-                <Meta>
-                    <Button variant="unelevated" on:click={() => goToExerciseEdit(id)}>
-                        <ButtonLabel>Edit</ButtonLabel>
-                    </Button>
-                    <Button variant="unelevated" on:click={() => goToExerciseDetails(id)}>
-                        <ButtonLabel>Details</ButtonLabel>
-                    </Button>
-                </Meta>
-            </Item>
-        {/each}
-    </List>
+<div class="m-auto max-w-5xl">
+    <table class="table table-compact w-full">
+        <thead>
+            <tr>
+                <th colspan="2">Exercises</th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each exercises as {id, name}, index (id)}
+                <tr>
+                    <td>{name}</td>
+                    <td class="w-14">
+                        <button class="btn btn-primary btn-xs" on:click={() => goToExerciseEdit(id)}>Edit</button>
+                        <button class="btn btn-primary btn-xs" on:click={() => goToExerciseDetails(id)}>Details</button>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
 </div>
