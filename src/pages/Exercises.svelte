@@ -85,7 +85,7 @@
             <th class="w-14">
             </th>
             <th class="w-14">
-                <button class="btn btn-primary btn-sm" on:click={() => openExerciseAddModal()}>Add</button>
+                <button class="btn btn-primary btn-xs" on:click={() => openExerciseAddModal()}>Add</button>
             </th>
         </tr>
     </thead>
@@ -94,8 +94,8 @@
             <tr>
                 <td>{name}</td>
                 <td colspan="2" class="w-14">
-                    <button class="btn btn-primary btn-xs" on:click={() => openExerciseEditModal(id)}>Edit</button>
-                    <button class="btn btn-primary btn-xs" on:click={() => goToExerciseDetails(id)}>Details</button>
+                    <button class="btn btn-secondary btn-xs" on:click={() => openExerciseEditModal(id)}>Edit</button>
+                    <button class="btn btn-secondary btn-xs" on:click={() => goToExerciseDetails(id)}>Details</button>
                 </td>
             </tr>
         {/each}
