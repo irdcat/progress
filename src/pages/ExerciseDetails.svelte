@@ -1,7 +1,10 @@
 <script lang="ts">
     import { LinkedChart, LinkedLabel, LinkedValue } from "svelte-tiny-linked-charts";
+    import { querystring } from "svelte-spa-router";
+    import { parse } from "qs";
 
-    export let params = { id: "" };
+
+    export let params = parse($querystring)
 
     function generateFakeData(times, min, max) {
         const data = {};
