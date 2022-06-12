@@ -2,7 +2,7 @@
     import { push } from "svelte-spa-router";
 
     function goToExerciseDetails(exerciseId) {
-        push(`/exercises/${exerciseId}/details`)
+        push(`/exercises/details?id=${exerciseId}`)
     }
 
     // TODO: Fetch exercise list from backend
