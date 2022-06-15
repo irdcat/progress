@@ -56,10 +56,12 @@
     "windows": [
       {
         "fullscreen": false,
-        "height": 600,
+        "width": 1024,
+        "height": 768,
+        "minWidth": 1024,
+        "minHeight": 768,
         "resizable": true,
-        "title": "Progress",
-        "width": 800
+        "title": "Progress"
       }
     ]
   }
