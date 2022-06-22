@@ -17,7 +17,7 @@
     "@tauri-apps/cli": "^1.0.0-rc.13",
     "@tsconfig/svelte": "^2.0.0",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
-    "daisyui": "^2.15.2",
+    "daisyui": "^2.17.0",
     "qs": "^6.10.5",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
