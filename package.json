@@ -12,7 +12,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
-    "@rollup/plugin-typescript": "^8.0.0",
+    "@rollup/plugin-typescript": "^8.3.3",
     "@tauri-apps/api": "^1.0.0-rc.6",
     "@tauri-apps/cli": "^1.0.0-rc.13",
     "@tsconfig/svelte": "^2.0.0",
