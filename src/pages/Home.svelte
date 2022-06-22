@@ -3,3 +3,4 @@
 </script>
 
 <button class="btn" on:click={() => push("/exercises")}>Exercises</button>
+<button class="btn" on:click={() => push("/test")}>Test</button>
