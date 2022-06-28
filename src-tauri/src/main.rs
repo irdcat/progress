@@ -7,9 +7,11 @@
 extern crate diesel;
 
 mod db;
-use db::models::*;
-use db::payloads::ExercisePayload;
+mod payloads;
+
 use db::*;
+use db::models::*;
+use payloads::*;
 
 #[tauri::command]
 fn get_exercises(db_state: tauri::State<DatabaseState>) -> Vec<Exercise> {
