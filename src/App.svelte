@@ -4,11 +4,9 @@
     import Home from "./pages/Home.svelte";
     import Exercises from "./pages/Exercises.svelte";
     import ExerciseDetails from "./pages/ExerciseDetails.svelte";
-    import Test from "./pages/Test.svelte";
     
     const routes = {
         "/": Home,
-        "/test": Test,
         "/exercises": Exercises,
         "/exercises/details": ExerciseDetails
     };
