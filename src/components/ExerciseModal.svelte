@@ -1,40 +1,44 @@
 <script lang="ts" context="module">
-    const MODAL_OPEN_CLASS = "modal-open";
+    class ExerciseModalUtils {
+        static MODAL_OPEN_CLASS = "modal-open";
 
-    export function openModal(modalId: string): void {
-        let modalElement = document.querySelector('#' + modalId);
-        let classList = modalElement.classList;
-        if(classList.contains(MODAL_OPEN_CLASS)) {
-            return;
+        static openModal(modalId: string): void {
+            let modalElement = document.querySelector('#' + modalId);
+            let classList = modalElement.classList;
+            if(classList.contains(ExerciseModalUtils.MODAL_OPEN_CLASS)) {
+                return;
+            }
+            classList.add(ExerciseModalUtils.MODAL_OPEN_CLASS);
         }
-        classList.add(MODAL_OPEN_CLASS);
-    }
 
-    export function closeModal(modalId: string): void {
-        let modalElement = document.querySelector('#' + modalId);
-        let classList = modalElement.classList;
-        if(classList.contains(MODAL_OPEN_CLASS)) {
-            classList.remove(MODAL_OPEN_CLASS);
+        static closeModal(modalId: string): void {
+            let modalElement = document.querySelector('#' + modalId);
+            let classList = modalElement.classList;
+            if(classList.contains(ExerciseModalUtils.MODAL_OPEN_CLASS)) {
+                classList.remove(ExerciseModalUtils.MODAL_OPEN_CLASS);
+            }
         }
-    }
 
-    export function getFormData(modalId: string, field: string): any {
-        let form: HTMLFormElement = document.forms[modalId + "-form"];
-        let formElement = form[modalId + '-' + field];
-        if(formElement.type == "checkbox") {
-            return formElement.checked ? true : false;
+        static getFormData(modalId: string, field: string): any {
+            let form: HTMLFormElement = document.forms[modalId + "-form"];
+            let formElement = form[modalId + '-' + field];
+            if(formElement.type == "checkbox") {
+                return formElement.checked ? true : false;
+            }
+            return formElement.value;
         }
-        return formElement.value;
-    }
 
-    export function setFormData(modalId: string, field: string, data: any) {
-        let form: HTMLFormElement = document.forms[modalId + "-form"];
-        let formElement = form[modalId + '-' + field];
-        if(formElement.type == "checkbox") {
-            formElement.checked = data ? true : false;
+        static setFormData(modalId: string, field: string, data: any) {
+            let form: HTMLFormElement = document.forms[modalId + "-form"];
+            let formElement = form[modalId + '-' + field];
+            if(formElement.type == "checkbox") {
+                formElement.checked = data ? true : false;
+            }
+            formElement.value = data;
         }
-        formElement.value = data;
-    }
+    };
+    
+    export { ExerciseModalUtils };
 </script>
 
 <script lang="ts">
@@ -58,22 +62,22 @@
 
     function ok(modalId: string): void {
         let data: ExercisePayload = {
-            name: getFormData(modalId, "name"),
-            description: getFormData(modalId, "description"),
-            bodyweight: getFormData(modalId, "bodyweight")
+            name: ExerciseModalUtils.getFormData(modalId, "name"),
+            description: ExerciseModalUtils.getFormData(modalId, "description"),
+            bodyweight: ExerciseModalUtils.getFormData(modalId, "bodyweight")
         };
         onOk(data);
-        closeModal(modalId);
+        ExerciseModalUtils.closeModal(modalId);
     }
 
     function cancel(modalId: string): void {
         let data: ExercisePayload = {
-            name: getFormData(modalId, "name"),
-            description: getFormData(modalId, "description"),
-            bodyweight: getFormData(modalId, "bodyweight")
+            name: ExerciseModalUtils.getFormData(modalId, "name"),
+            description: ExerciseModalUtils.getFormData(modalId, "description"),
+            bodyweight: ExerciseModalUtils.getFormData(modalId, "bodyweight")
         };
         onCancel(data);
-        closeModal(modalId);
+        ExerciseModalUtils.closeModal(modalId);
     }
 </script>
 

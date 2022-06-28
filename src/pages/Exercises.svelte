@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { invoke } from "@tauri-apps/api/tauri";
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
-    import ExerciseModal, { getFormData, openModal, setFormData } from "../components/ExerciseModal.svelte";
+    import ExerciseModal, { ExerciseModalUtils } from "../components/ExerciseModal.svelte";
     import ExerciseFacade from "../util/ExerciseFacade";
     import type { Exercise, ExercisePayload } from "../util/types";
 
@@ -21,25 +20,27 @@
     }
 
     function openExerciseAddModal(): void {
-        openModal(EXERCISE_ADD_MODAL_ID);
+        ExerciseModalUtils.openModal(EXERCISE_ADD_MODAL_ID);
     }
 
     async function openExerciseEditModal(id: string): Promise<void> {
         let exercise: Exercise = await exerciseFacade.getExercise(id);
-        setFormData(EXERCISE_EDIT_MODAL_ID, "id", exercise.id);
-        setFormData(EXERCISE_EDIT_MODAL_ID, "name", exercise.name);
-        setFormData(EXERCISE_EDIT_MODAL_ID, "description", exercise.description);
-        setFormData(EXERCISE_EDIT_MODAL_ID, "bodyweight", exercise.bodyweight);
-        openModal(EXERCISE_EDIT_MODAL_ID);
+        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "id", exercise.id);
+        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "name", exercise.name);
+        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "description", exercise.description);
+        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "bodyweight", exercise.bodyweight);
+        ExerciseModalUtils.openModal(EXERCISE_EDIT_MODAL_ID);
     }
 
     async function onAddOk(data: ExercisePayload): Promise<void> {
         await exerciseFacade.addExercise(data);
+        exercises = await exerciseFacade.getExercises();
     }
 
     async function onEditOk(data: ExercisePayload): Promise<void> {
-        let exerciseId: string = getFormData(EXERCISE_EDIT_MODAL_ID, "id");
+        let exerciseId: string = ExerciseModalUtils.getFormData(EXERCISE_EDIT_MODAL_ID, "id");
         await exerciseFacade.updateExercise(exerciseId, data);
+        exercises = await exerciseFacade.getExercises();
     }
 </script>
 
