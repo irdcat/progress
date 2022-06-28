@@ -1,12 +1,13 @@
 pub mod models;
 pub mod schema;
+pub mod payloads;
 
 use std::{sync::{Arc, Mutex}, ops::Deref};
-use uuid::Uuid;
 use models::*;
-use schema::test;
-use schema::test::dsl::*;
+use schema::exercises::dsl::*;
+
 use diesel::prelude::*;
+use uuid::Uuid;
 
 const DEFAULT_DATABASE_URL: &str = "test.db";
 
@@ -28,26 +29,54 @@ impl Database {
         return SqliteConnection::establish(DEFAULT_DATABASE_URL)
             .unwrap_or_else(|_| panic!("Error connecting to {}", DEFAULT_DATABASE_URL));
     }
+}
 
-    pub fn get_test(&self) -> Vec<Test> {
-        let connection_mutex = self.connection_arc_mutex.lock().unwrap();
-        let connection = connection_mutex.deref();
-        return test.load::<Test>(connection).expect("Error loading data");
+pub trait ExercisesOperations {
+    fn find_exercises(&self) -> Vec<Exercise>;
+    fn find_exercise(&self, id: String) -> Exercise;
+    fn add_exercise(&self, exercise: NewExercise);
+    fn update_exercise(&self, id: String, exercise: UpdateExercise);
+}
+
+impl ExercisesOperations for Database {
+    fn find_exercises(&self) -> Vec<Exercise> {
+        let connection_arc_mutex = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_arc_mutex.deref();
+
+        return exercises.load::<Exercise>(connection)
+            .expect("Failed to load exercises");
     }
-    
-    pub fn create_test(&self, test_name: &str) -> String {
-        let connection_mutex = self.connection_arc_mutex.lock().unwrap();
-        let connection = connection_mutex.deref();
-        let uuid = Uuid::new_v4().as_hyphenated().to_string();
 
-        let new_test = NewTest { id: &uuid, name: test_name };
-    
-        diesel::insert_into(test::table)
-            .values(&new_test)
+    fn find_exercise(&self, exercise_id: String) -> Exercise {
+        let connection_arc_mutex = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_arc_mutex.deref();
+        
+        return exercises.find(&exercise_id)
+            .first(connection)
+            .expect(format!("Could not load exercise with id: {}", exercise_id).as_str());
+    }
+
+    fn add_exercise(&self, exercise: NewExercise) {
+        let connection_arc_mutex = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_arc_mutex.deref();
+        
+        let uuid = Uuid::new_v4().hyphenated().to_string();
+
+        diesel::insert_into(exercises)
+            .values((id.eq(uuid), exercise))
             .execute(connection)
-            .expect("Error creating new data");
+            .expect("Could not add new exercise");
+    }
 
-        return uuid;
+    fn update_exercise(&self, exercise_id: String, exercise: UpdateExercise) {
+        let connection_arc_mutex = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_arc_mutex.deref();
+
+        diesel::update(exercises)
+            .set(&exercise)
+            .filter(id.eq(&exercise_id))
+            .execute(connection)
+            .expect(format!("Could not update exercise with id {}", exercise_id).as_str());
     }
 }
 

@@ -3,7 +3,6 @@
     import { querystring } from "svelte-spa-router";
     import { parse } from "qs";
 
-
     export let params = parse($querystring)
 
     function generateFakeData(times, min, max) {
