@@ -1,6 +1,5 @@
 pub mod models;
 pub mod schema;
-pub mod payloads;
 
 use std::{sync::{Arc, Mutex}, ops::Deref};
 use models::*;
