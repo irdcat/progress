@@ -4,11 +4,13 @@
     import Home from "./pages/Home.svelte";
     import Exercises from "./pages/Exercises.svelte";
     import ExerciseDetails from "./pages/ExerciseDetails.svelte";
+    import Trainings from "./pages/Trainings.svelte";
     
     const routes = {
         "/": Home,
         "/exercises": Exercises,
-        "/exercises/details": ExerciseDetails
+        "/exercises/details": ExerciseDetails,
+        "/trainings": Trainings
     };
 
     let locationParts = $location.split("/").filter((part) => part != "");
