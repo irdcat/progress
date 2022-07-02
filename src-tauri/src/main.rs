@@ -4,7 +4,7 @@
 )]
 
 #[macro_use]
-extern crate diesel;
+extern crate rusqlite;
 
 mod db;
 mod payloads;
@@ -34,11 +34,11 @@ fn add_exercise(db_state: tauri::State<DatabaseState>, exercise: ExercisePayload
     info!("Invoking add_exercise command with parameters: {{ exercise: {:?} }}", exercise);
     let new_exercise = NewExercise{
         name: match &exercise.name {
-            Some(x) => x.as_str(),
+            Some(x) => x.to_string(),
             None => panic!("Name required for new exercise"),
         },
         description: match &exercise.description {
-            Some(x) => Some(x.as_str()),
+            Some(x) => Some(x.to_string()),
             None => None,
         },
         bodyweight: match exercise.bodyweight {
@@ -55,11 +55,11 @@ fn update_exercise(db_state: tauri::State<DatabaseState>, id: String, exercise: 
     info!("Invoking update_exercise command with parameters: {{ id: {}, exercise: {:?} }}", id, exercise);
     let update_exercise = UpdateExercise {
         name: match &exercise.name {
-            Some(x) => Some(x.as_str()),
+            Some(x) => Some(x.to_string()),
             None => None,
         },
         description: match &exercise.description {
-            Some(x) => Some(x.as_str()),
+            Some(x) => Some(x.to_string()),
             None => None,
         },
         bodyweight: exercise.bodyweight,
