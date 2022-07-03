@@ -1,21 +1,16 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 #[derive(Serialize)]
 pub struct Exercise {
     pub id: String,
     pub name: String,
-    pub description: Option<String>,
+    pub description: String,
     pub bodyweight: bool,
 }
 
-pub struct NewExercise {
+#[derive(Deserialize, Debug)]
+pub struct ExercisePatch {
     pub name: String,
-    pub description: Option<String>,
+    pub description: String,
     pub bodyweight: bool,
-}
-
-pub struct UpdateExercise {
-    pub name: Option<String>,
-    pub description: Option<String>,
-    pub bodyweight: Option<bool>,
 }

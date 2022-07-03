@@ -55,8 +55,8 @@ impl Database {
 pub trait ExercisesOperations {
     fn find_exercises(&self) -> Vec<Exercise>;
     fn find_exercise(&self, id: String) -> Exercise;
-    fn add_exercise(&self, exercise: NewExercise);
-    fn update_exercise(&self, id: String, exercise: UpdateExercise);
+    fn add_exercise(&self, exercise: ExercisePatch);
+    fn update_exercise(&self, id: String, exercise: ExercisePatch);
 }
 
 impl ExercisesOperations for Database {
@@ -102,31 +102,31 @@ impl ExercisesOperations for Database {
         return exercise_iterator.next().unwrap().unwrap();
     }
 
-    fn add_exercise(&self, exercise: NewExercise) {
-        const ADD_EXERCISE_SQL_STATEMENT: &str = "INSERT INTO exercises (id, name, bodyweight) VALUES (?1, ?2, ?3)";
-        const ADD_FULL_EXERCISE_SQL_STATEMENT: &str = "INSERT INTO exercises (id, name, description, bodyweight) VALUES (?1, ?2, ?3, ?4)";
+    fn add_exercise(&self, exercise: ExercisePatch) {
+        const ADD_EXERCISE_SQL_STATEMENT: &str = "INSERT INTO exercises (id, name, description, bodyweight) VALUES (?1, ?2, ?3, ?4)";
 
         let connection_guard = self.connection_arc_mutex.lock().unwrap();
         let connection = connection_guard.deref();
 
         let uuid = Uuid::new_v4().as_hyphenated().to_string();
-        let result = match &exercise.description {
-            Some(description) => 
-                connection.execute(ADD_FULL_EXERCISE_SQL_STATEMENT, params![uuid, exercise.name, description, exercise.bodyweight]),
-            None => 
-                connection.execute(ADD_EXERCISE_SQL_STATEMENT, params![uuid, exercise.name, exercise.bodyweight]),
-        };
-        result.unwrap();
+        let mut statement = connection.prepare(ADD_EXERCISE_SQL_STATEMENT).unwrap();
+        match statement.execute(params![uuid, exercise.name, exercise.description, exercise.bodyweight]) {
+            Ok(_) => info!("Insert successful"),
+            Err(err) => {
+                error!("Insert failed: {}", err);
+                error!("Statement: {}", statement.expanded_sql().unwrap());
+            },
+        }
     }
 
-    fn update_exercise(&self, exercise_id: String, exercise: UpdateExercise) {
+    fn update_exercise(&self, exercise_id: String, exercise: ExercisePatch) {
         const UPDATE_EXERCISE_SQL_STATEMENT: &str = "UPDATE exercises SET name = ?1, description = ?2, bodyweight = ?3 WHERE id = ?4";
 
         let connection_guard = self.connection_arc_mutex.lock().unwrap();
         let connection = connection_guard.deref();
 
         let mut statement = connection.prepare(UPDATE_EXERCISE_SQL_STATEMENT).unwrap();
-        match statement.execute(params![exercise.name.unwrap(), exercise.description.unwrap(), exercise.bodyweight.unwrap(), exercise_id]) {
+        match statement.execute(params![exercise.name, exercise.description, exercise.bodyweight, exercise_id]) {
             Ok(_) => info!("Update successful"),
             Err(err) => {
                 error!("Update failed: {}", err);
