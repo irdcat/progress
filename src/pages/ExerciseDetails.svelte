@@ -26,46 +26,64 @@
     let intensities = generateFakeData(50, 30, 100);
 </script>
 
-<table class="table w-full">
-    <thead>
-        <tr>
-            <th colspan="3">Exercise {params.id}</th>
-            <th class="text-center"><LinkedLabel linked="link" empty="Value"/></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td colspan="5" class="font-semibold">Volume</td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <LinkedChart data={volumes} width="700" grow="true" height="100" align="left" fill="#20ff20" linked="link" uid="volume"/>
-            </td>
-            <td class="text-center">
-                <LinkedValue uid="volume"/>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="5" class="font-semibold">Average volume per set</td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <LinkedChart data={avgVolumes} width="700" grow="true" height="100" align="left" fill="#50ff50" linked="link" uid="avgVolume"/>
-            </td>
-            <td class="text-center">
-                <LinkedValue uid="avgVolume"/>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="5" class="font-semibold">Intensity</td>
-        </tr>
-        <tr>
-            <td colspan="3">
-                <LinkedChart data={intensities} width="700" grow="true" height="100" align="left" fill="#ff2020" linked="link" uid="intensity"/>
-            </td>
-            <td class="text-center">
-                <LinkedValue uid="intensity"/>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="w-full flex flex-col">
+    <div class="flex grow p-2 bg-base-300">
+        <p class="grow font-semibold text-xl leading-8 uppercase">
+            Exercise {params.id}
+        </p>
+        <p class="grow-0 w-28 font-semibold text-xl leading-8 uppercase text-left">
+            Date
+        </p>
+        <p class="grow-0 w-28 font-semibold text-xl leading-8 uppercase text-left">
+            Value
+        </p>
+    </div>
+    <div class="flex grow p-2 bg-base-100">
+        <p class="grow font-semibold text-lg leading-8 uppercase">
+            Volume
+        </p>
+    </div>
+    <div class="flex grow p-2 items-end">
+        <div class="grow">
+            <LinkedChart data={volumes} width="700" grow="true" height="100" align="left" fill="#20ff20" linked="link" uid="volume"/>
+        </div>
+        <p class="grow-0 w-28 text-left font-medium">
+            <LinkedLabel linked="link"/>
+        </p>
+        <p class="grow-0 w-28 text-left font-medium">
+            <LinkedValue uid="volume"/>
+        </p>
+    </div>
+    <div class="flex grow p-2 bg-base-100">
+        <p class="grow font-semibold text-lg leading-8 uppercase">
+            Average volume per set
+        </p>
+    </div>
+    <div class="flex grow p-2 items-end">
+        <div class="grow">
+            <LinkedChart data={avgVolumes} width="700" grow="true" height="100" align="left" fill="#50ff50" linked="link" uid="avgVolume"/>
+        </div>
+        <p class="grow-0 w-28 text-left font-medium">
+            <LinkedLabel linked="link"/>
+        </p>
+        <p class="grow-0 w-28 text-left font-medium">
+            <LinkedValue uid="avgVolume"/>
+        </p>
+    </div>
+    <div class="flex grow p-2 bg-base-100">
+        <p class="grow font-semibold text-lg leading-8 uppercase">
+            Intensity
+        </p>
+    </div>
+    <div class="flex grow p-2 items-end">
+        <div class="grow">
+            <LinkedChart data={intensities} width="700" grow="true" height="100" align="left" fill="#ff2020" linked="link" uid="intensity"/>
+        </div>
+        <p class="grow-0 w-28 text-left font-medium">
+            <LinkedLabel linked="link"/>
+        </p>
+        <p class="grow-0 w-28 text-left font-medium">
+            <LinkedValue uid="intensity"/>
+        </p>
+    </div>
+</div>
