@@ -7,27 +7,24 @@ use uuid::Uuid;
 
 use models::*;
 
-const DEFAULT_DATABASE_PATH: &str = "./test.db";
+const DEFAULT_DATABASE_FILE: &str = "test.db";
 
 pub struct Database {
     connection_arc_mutex: Arc<Mutex<Connection>>,
 }
 
 impl Database {
-    pub fn new() -> Self {
-        return Database { 
-            connection_arc_mutex: Arc::new(
-                Mutex::new(
-                    Database::establish_connection()
-                )) 
-        };
+    pub fn new(path: String) -> Self {
+        return Database { connection_arc_mutex: Arc::new(Mutex::new(Database::establish_connection(path))) };
     }
 
-    fn establish_connection() -> Connection {
-        match Connection::open_with_flags(DEFAULT_DATABASE_PATH, OpenFlags::SQLITE_OPEN_READ_WRITE) {
+    fn establish_connection(mut path: String) -> Connection {
+        path.push_str(if path.contains("\\") {"\\"} else {"/"});
+        path.push_str(DEFAULT_DATABASE_FILE);
+        match Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE) {
             Ok(c) => return c,
             Err(_) => {
-                let c = Connection::open(DEFAULT_DATABASE_PATH).unwrap();
+                let c = Connection::open(&path).unwrap();
                 Database::initialize_db_model(&c);
                 return c
             },

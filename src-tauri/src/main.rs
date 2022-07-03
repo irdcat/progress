@@ -12,6 +12,7 @@ use db::*;
 use db::models::*;
 use log::{info, error};
 use simple_logger::SimpleLogger;
+use tauri::Manager;
 
 #[tauri::command]
 fn get_exercises(db_state: tauri::State<DatabaseState>) -> Vec<Exercise> {
@@ -45,7 +46,12 @@ fn main() {
     SimpleLogger::new().init().unwrap();
     info!("Running application");
     let result = tauri::Builder::default()
-        .manage(DatabaseState::new(Database::new()))
+        .setup(|app| {
+            let path_resolver = app.path_resolver();
+            let app_dir = path_resolver.app_dir().unwrap().into_os_string().into_string().unwrap();
+            app.manage(DatabaseState::new(Database::new(app_dir)));
+            return Ok(());
+        })
         .invoke_handler(tauri::generate_handler![get_exercises, get_exercise, add_exercise, update_exercise])
         .run(tauri::generate_context!());
     match result {
