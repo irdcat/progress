@@ -25,26 +25,24 @@
     }
 </script>
 
-<table class="table table-compact w-full">
-    <thead>
-        <tr>
-            <th>Trainings</th>
-            <th class="w-14">
-            </th>
-            <th class="w-14">
-                <button class="btn btn-primary btn-xs" on:click={() => openTrainingAddModal()}>Add</button>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each trainings as {id, date}, index (id)}
-            <tr>
-                <td>{date}</td>
-                <td colspan="2" class="w-14">
-                    <button class="btn btn-secondary btn-xs" on:click={() => openTrainingEditModal(id)}>Edit</button>
-                    <button class="btn btn-secondary btn-xs" on:click={() => goToTrainingDetails(id)}>Details</button>
-                </td>
-            </tr>
-        {/each}
-    </tbody>
-</table>
+<div class="w-full flex flex-col">
+    <div class="flex grow p-2 bg-base-300">
+        <p class="grow font-semibold text-2xl leading-8 uppercase">
+            Trainings
+        </p>
+        <div class="grow-0">
+            <button class="btn btn-primary btn-sm" on:click={() => openTrainingAddModal()}>Add</button>
+        </div>
+    </div>
+    {#each trainings as {id, date}, index (id)}
+        <div class="flex grow p-2">
+            <p class="grow text-md font-normal">
+                {date}
+            </p>
+            <div class="grow-0">
+                <button class="btn btn-secondary btn-sm" on:click={() => openTrainingEditModal(id)}>Edit</button>
+                <button class="btn btn-secondary btn-sm" on:click={() => goToTrainingDetails(id)}>Details</button>
+            </div>
+        </div>
+    {/each}
+</div>

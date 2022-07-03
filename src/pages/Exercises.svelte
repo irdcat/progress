@@ -47,26 +47,24 @@
 <ExerciseModal mId={EXERCISE_ADD_MODAL_ID} onOk={onAddOk}/>
 <ExerciseModal mId={EXERCISE_EDIT_MODAL_ID} onOk={onEditOk}/>
 
-<table class="table table-compact w-full">
-    <thead>
-        <tr>
-            <th>Exercises</th>
-            <th class="w-14">
-            </th>
-            <th class="w-14">
-                <button class="btn btn-primary btn-xs" on:click={() => openExerciseAddModal()}>Add</button>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each exercises as {id, name}, index (id)}
-            <tr>
-                <td>{name}</td>
-                <td colspan="2" class="w-14">
-                    <button class="btn btn-secondary btn-xs" on:click={() => openExerciseEditModal(id)}>Edit</button>
-                    <button class="btn btn-secondary btn-xs" on:click={() => goToExerciseDetails(id)}>Details</button>
-                </td>
-            </tr>
-        {/each}
-    </tbody>
-</table>
+<div class="w-full flex flex-col">
+    <div class="flex grow p-2 bg-base-300">
+        <p class="grow font-semibold text-2xl leading-8 uppercase">
+            Exercises
+        </p>
+        <div class="grow-0">
+            <button class="btn btn-primary btn-sm" on:click={() => openExerciseAddModal()}>Add</button>
+        </div>
+    </div>
+    {#each exercises as {id, name}, index (id)}
+        <div class="flex grow p-2">
+            <p class="grow text-md font-normal">
+                {name}
+            </p>
+            <div class="grow-0">
+                <button class="btn btn-secondary btn-sm" on:click={() => openExerciseEditModal(id)}>Edit</button>
+                <button class="btn btn-secondary btn-sm" on:click={() => goToExerciseDetails(id)}>Details</button>
+            </div>
+        </div>
+    {/each}
+</div>

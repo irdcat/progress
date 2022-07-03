@@ -106,7 +106,7 @@
         </form>
         <div class="flex">
             <div class="grow"/>
-            <div class="flex-none modal-action">
+            <div class="grow-0 modal-action">
                 <button class="btn btn-success" on:click={() => ok(mId)}>Ok</button>
                 <button class="btn btn-error" on:click={() => cancel(mId)}>Cancel</button>
             </div>
