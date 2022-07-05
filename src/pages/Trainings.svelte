@@ -1,4 +1,9 @@
 <script lang="ts">
+    import TrainingModal from "../components/TrainingModal.svelte";
+    import ModalUtils from "../util/ModalUtils";
+
+    const TRAINING_ADD_MODAL = "training-add-modal";
+
     function formatDate(date: Date): string {
         return date.toISOString().substring(0, 10);
     }
@@ -13,7 +18,7 @@
     ];
 
     function openTrainingAddModal(): void {
-        // TODO: Implement later
+        ModalUtils.openModal(TRAINING_ADD_MODAL);
     }
 
     function openTrainingEditModal(id: string): void {
@@ -24,6 +29,8 @@
         // TODO: Implement later
     }
 </script>
+
+<TrainingModal mId={TRAINING_ADD_MODAL} caption="Add training"/>
 
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">
