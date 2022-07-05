@@ -1,4 +1,6 @@
 <script lang="ts">
+import { push } from "svelte-spa-router";
+
     import TrainingModal from "../components/TrainingModal.svelte";
     import ModalUtils from "../util/ModalUtils";
 
@@ -25,8 +27,8 @@
         // TODO: Implement later
     }
 
-    function goToTrainingDetails(id: string): void {
-        // TODO: Implement later
+    function goToTrainingDetails(trainingId: string): void {
+        push(`/trainings/details?id=${trainingId}`);
     }
 </script>
 
