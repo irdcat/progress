@@ -1,50 +1,9 @@
-<script lang="ts" context="module">
-    class ExerciseModalUtils {
-        static MODAL_OPEN_CLASS = "modal-open";
-
-        static openModal(modalId: string): void {
-            let modalElement = document.querySelector('#' + modalId);
-            let classList = modalElement.classList;
-            if(classList.contains(ExerciseModalUtils.MODAL_OPEN_CLASS)) {
-                return;
-            }
-            classList.add(ExerciseModalUtils.MODAL_OPEN_CLASS);
-        }
-
-        static closeModal(modalId: string): void {
-            let modalElement = document.querySelector('#' + modalId);
-            let classList = modalElement.classList;
-            if(classList.contains(ExerciseModalUtils.MODAL_OPEN_CLASS)) {
-                classList.remove(ExerciseModalUtils.MODAL_OPEN_CLASS);
-            }
-        }
-
-        static getFormData(modalId: string, field: string): any {
-            let form: HTMLFormElement = document.forms[modalId + "-form"];
-            let formElement = form[modalId + '-' + field];
-            if(formElement.type == "checkbox") {
-                return formElement.checked ? true : false;
-            }
-            return formElement.value;
-        }
-
-        static setFormData(modalId: string, field: string, data: any) {
-            let form: HTMLFormElement = document.forms[modalId + "-form"];
-            let formElement = form[modalId + '-' + field];
-            if(formElement.type == "checkbox") {
-                formElement.checked = data ? true : false;
-            }
-            formElement.value = data;
-        }
-    };
-    
-    export { ExerciseModalUtils };
-</script>
-
 <script lang="ts">
     import type { ExercisePayload } from "../util/types";
+    import ModalUtils from "../util/ModalUtils";
 
     export let mId: string;
+    export let caption: string = "&nbsp;";
     export let onOk: (data: ExercisePayload) => void = (d) => {};
     export let onCancel: (data: ExercisePayload) => void = (d) => {};
 
@@ -62,27 +21,30 @@
 
     function ok(modalId: string): void {
         let data: ExercisePayload = {
-            name: ExerciseModalUtils.getFormData(modalId, "name"),
-            description: ExerciseModalUtils.getFormData(modalId, "description"),
-            bodyweight: ExerciseModalUtils.getFormData(modalId, "bodyweight")
+            name: ModalUtils.getFormData(modalId, "name"),
+            description: ModalUtils.getFormData(modalId, "description"),
+            bodyweight: ModalUtils.getFormData(modalId, "bodyweight")
         };
         onOk(data);
-        ExerciseModalUtils.closeModal(modalId);
+        ModalUtils.closeModal(modalId);
     }
 
     function cancel(modalId: string): void {
         let data: ExercisePayload = {
-            name: ExerciseModalUtils.getFormData(modalId, "name"),
-            description: ExerciseModalUtils.getFormData(modalId, "description"),
-            bodyweight: ExerciseModalUtils.getFormData(modalId, "bodyweight")
+            name: ModalUtils.getFormData(modalId, "name"),
+            description: ModalUtils.getFormData(modalId, "description"),
+            bodyweight: ModalUtils.getFormData(modalId, "bodyweight")
         };
         onCancel(data);
-        ExerciseModalUtils.closeModal(modalId);
+        ModalUtils.closeModal(modalId);
     }
 </script>
 
 <div id={mId} class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
+        <h1 class="font-semibold text-2xl uppercase">
+            {caption}
+        </h1>
         <form name={FORM_NAME} id={FORM_NAME}>
             <input type="hidden" name={ID_FIELD_NAME} id={ID_FIELD_NAME}/>
             <div class="form-control w-full max-w-xs">

@@ -1,8 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
-    import ExerciseModal, { ExerciseModalUtils } from "../components/ExerciseModal.svelte";
+    import ExerciseModal from "../components/ExerciseModal.svelte";
     import ExerciseFacade from "../util/ExerciseFacade";
+    import ModalUtils from "../util/ModalUtils";
     import type { Exercise, ExercisePayload } from "../util/types";
 
     let exerciseFacade = new ExerciseFacade();
@@ -20,16 +21,16 @@
     }
 
     function openExerciseAddModal(): void {
-        ExerciseModalUtils.openModal(EXERCISE_ADD_MODAL_ID);
+        ModalUtils.openModal(EXERCISE_ADD_MODAL_ID);
     }
 
     async function openExerciseEditModal(id: string): Promise<void> {
         let exercise: Exercise = await exerciseFacade.getExercise(id);
-        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "id", exercise.id);
-        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "name", exercise.name);
-        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "description", exercise.description);
-        ExerciseModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "bodyweight", exercise.bodyweight);
-        ExerciseModalUtils.openModal(EXERCISE_EDIT_MODAL_ID);
+        ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "id", exercise.id);
+        ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "name", exercise.name);
+        ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "description", exercise.description);
+        ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "bodyweight", exercise.bodyweight);
+        ModalUtils.openModal(EXERCISE_EDIT_MODAL_ID);
     }
 
     async function onAddOk(data: ExercisePayload): Promise<void> {
@@ -38,14 +39,14 @@
     }
 
     async function onEditOk(data: ExercisePayload): Promise<void> {
-        let exerciseId: string = ExerciseModalUtils.getFormData(EXERCISE_EDIT_MODAL_ID, "id");
+        let exerciseId: string = ModalUtils.getFormData(EXERCISE_EDIT_MODAL_ID, "id");
         await exerciseFacade.updateExercise(exerciseId, data);
         exercises = await exerciseFacade.getExercises();
     }
 </script>
 
-<ExerciseModal mId={EXERCISE_ADD_MODAL_ID} onOk={onAddOk}/>
-<ExerciseModal mId={EXERCISE_EDIT_MODAL_ID} onOk={onEditOk}/>
+<ExerciseModal mId={EXERCISE_ADD_MODAL_ID} caption="Add exercise" onOk={onAddOk}/>
+<ExerciseModal mId={EXERCISE_EDIT_MODAL_ID} caption="Edit exercise" onOk={onEditOk}/>
 
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">
