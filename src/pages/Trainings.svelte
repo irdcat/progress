@@ -1,10 +1,11 @@
 <script lang="ts">
-import { push } from "svelte-spa-router";
-
+    import { push } from "svelte-spa-router";
     import TrainingModal from "../components/TrainingModal.svelte";
     import ModalUtils from "../util/ModalUtils";
+import type { TrainingPayload } from "../util/types";
 
     const TRAINING_ADD_MODAL = "training-add-modal";
+    const TRAINING_EDIT_MODAL = "training-edit-modal";
 
     function formatDate(date: Date): string {
         return date.toISOString().substring(0, 10);
@@ -24,7 +25,16 @@ import { push } from "svelte-spa-router";
     }
 
     function openTrainingEditModal(id: string): void {
-        // TODO: Implement later
+        // TODO: Populate modal form data based on output from backend
+        ModalUtils.openModal(TRAINING_EDIT_MODAL);
+    }
+
+    async function onAddOk(data: TrainingPayload): Promise<void> {
+        // TODO: Send form data to backend
+    }
+
+    async function onEditOk(data: TrainingPayload): Promise<void> {
+        // TODO: Send form data to backend
     }
 
     function goToTrainingDetails(trainingId: string): void {
@@ -32,7 +42,8 @@ import { push } from "svelte-spa-router";
     }
 </script>
 
-<TrainingModal mId={TRAINING_ADD_MODAL} caption="Add training"/>
+<TrainingModal mId={TRAINING_ADD_MODAL} onOk={onAddOk} caption="Add training"/>
+<TrainingModal mId={TRAINING_EDIT_MODAL} onOk={onEditOk} caption="Edit training"/>
 
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">
