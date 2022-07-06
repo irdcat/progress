@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { TrainingEntryPayload, TrainingPayload, TrainingSetPayload } from "../util/types";
+    import type { TrainingEntry, TrainingPayload, TrainingSet } from "../util/types";
     import ModalUtils from "../util/ModalUtils";
     import StringUtils from "../util/StringUtils";
     import ExerciseFacade from "../util/ExerciseFacade";
@@ -73,13 +73,17 @@
         };
 
         for(let entryIndex = 0; entryIndex < entrySetCounter.length; entryIndex++) {
-            let entryPayload: TrainingEntryPayload = {
+            let entryPayload: TrainingEntry = {
+                id: ModalUtils.getFormData(modalId, 
+                    StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT.substring(1), entryIndex)),
                 exerciseId: ModalUtils.getFormData(modalId, 
                     StringUtils.format(ENTRY_EXERCISE_ID_SUFFIX_FORMAT.substring(1), entryIndex)),
                 sets: []
             };
             for(let entrySetIndex = 0; entrySetIndex < entrySetCounter[entryIndex]; entrySetIndex++) {
-                let setPayload: TrainingSetPayload = {
+                let setPayload: TrainingSet = {
+                    id: ModalUtils.getFormData(modalId,
+                        StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT.substring(1), entryIndex, entrySetIndex)),
                     repetitions: ModalUtils.getFormData(modalId, 
                         StringUtils.format(ENTRY_SET_REPETITIONS_SUFFIX_FORMAT.substring(1), entryIndex, entrySetIndex)),
                     weight: ModalUtils.getFormData(modalId, 
@@ -152,7 +156,7 @@
                     {#each entrySetCounter as entrySetCount, entryIndex}
                         <div class="flex flex-col grow p-2">
                             <div class="flex grow p-2">
-                                <input type="hidden"
+                                <input type="hidden" value=""
                                     id={StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT, entryIndex)}
                                     name={StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT, entryIndex)}/>
                                 <div class="form-control w-full max-w-xs">
@@ -185,7 +189,7 @@
                             {:else}    
                                 {#each Array(entrySetCount) as _, entrySetIndex}
                                     <div class="flex gap-x-3 grow p-2 items-end">
-                                        <input type="hidden"
+                                        <input type="hidden" value=""
                                             id={StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}
                                             name={StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}/>
                                         <div class="grow-0">

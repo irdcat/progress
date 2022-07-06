@@ -17,20 +17,10 @@ type TrainingSet = {
     weight: number
 };
 
-type TrainingSetPayload = {
-    repetitions: number,
-    weight: number
-}
-
 type TrainingEntry = {
     id: string,
     exerciseId: string,
     sets: TrainingSet[]
-};
-
-type TrainingEntryPayload = {
-    exerciseId: string,
-    sets: TrainingSetPayload[]
 };
 
 type Training = {
@@ -41,12 +31,12 @@ type Training = {
 
 type TrainingPayload = {
     date: Date,
-    exerciseEntries: TrainingEntryPayload[]
+    exerciseEntries: TrainingEntry[]
 };
 
 export type {
     Exercise, 
     ExercisePayload,
     TrainingSet, TrainingEntry, Training,
-    TrainingSetPayload, TrainingEntryPayload, TrainingPayload
+    TrainingPayload
 }
