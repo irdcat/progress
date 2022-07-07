@@ -19,19 +19,19 @@ type TrainingSet = {
 
 type TrainingEntry = {
     id: string,
-    exerciseId: string,
+    exercise_id: string,
     sets: TrainingSet[]
 };
 
 type Training = {
     id: string,
-    date: Date,
-    exerciseEntries: TrainingEntry[]
+    date: string,
+    entries: TrainingEntry[]
 };
 
 type TrainingPayload = {
-    date: Date,
-    exerciseEntries: TrainingEntry[]
+    date: string,
+    entries: TrainingEntry[]
 };
 
 export type {

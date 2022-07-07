@@ -1,40 +1,40 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
     import TrainingModal from "../components/TrainingModal.svelte";
+    import TrainingFacade from "../util/TrainingFacade";
     import ModalUtils from "../util/ModalUtils";
-import type { TrainingPayload } from "../util/types";
+    import type { Training, TrainingPayload } from "../util/types";
 
-    const TRAINING_ADD_MODAL = "training-add-modal";
-    const TRAINING_EDIT_MODAL = "training-edit-modal";
+    let trainingFacade: TrainingFacade = new TrainingFacade();
+    let trainings: Training[] = [];
 
-    function formatDate(date: Date): string {
-        return date.toISOString().substring(0, 10);
-    }
+    const TRAINING_ADD_MODAL_ID = "training-add-modal";
+    const TRAINING_EDIT_MODAL_ID = "training-edit-modal";
 
-    //TODO: Fetch trainings from backend
-    let trainings = [
-        {id: "1", date: formatDate(new Date(2022, 5, 14))},
-        {id: "2", date: formatDate(new Date(2022, 5, 16))},
-        {id: "3", date: formatDate(new Date(2022, 5, 18))},
-        {id: "4", date: formatDate(new Date(2022, 5, 21))},
-        {id: "5", date: formatDate(new Date(2022, 5, 23))}
-    ];
+    onMount(async () => {
+        trainings = await trainingFacade.getTrainings();
+    });
 
     function openTrainingAddModal(): void {
-        ModalUtils.openModal(TRAINING_ADD_MODAL);
+        ModalUtils.openModal(TRAINING_ADD_MODAL_ID);
     }
 
-    function openTrainingEditModal(id: string): void {
-        // TODO: Populate modal form data based on output from backend
-        ModalUtils.openModal(TRAINING_EDIT_MODAL);
+    async function openTrainingEditModal(id: string): Promise<void> {
+        let training: Training = await trainingFacade.getTraining(id);
+        // TODO: Populate form data
+        ModalUtils.openModal(TRAINING_EDIT_MODAL_ID);
     }
 
     async function onAddOk(data: TrainingPayload): Promise<void> {
-        // TODO: Send form data to backend
+        await trainingFacade.addTraining(data);
+        trainings = await trainingFacade.getTrainings();
     }
 
     async function onEditOk(data: TrainingPayload): Promise<void> {
-        // TODO: Send form data to backend
+        let trainingId: string = ModalUtils.getFormData(TRAINING_EDIT_MODAL_ID, "id");
+        await trainingFacade.updateTraining(trainingId, data);
+        trainings = await trainingFacade.getTrainings();
     }
 
     function goToTrainingDetails(trainingId: string): void {
@@ -42,8 +42,8 @@ import type { TrainingPayload } from "../util/types";
     }
 </script>
 
-<TrainingModal mId={TRAINING_ADD_MODAL} onOk={onAddOk} caption="Add training"/>
-<TrainingModal mId={TRAINING_EDIT_MODAL} onOk={onEditOk} caption="Edit training"/>
+<TrainingModal mId={TRAINING_ADD_MODAL_ID} onOk={onAddOk} caption="Add training"/>
+<TrainingModal mId={TRAINING_EDIT_MODAL_ID} onOk={onEditOk} caption="Edit training"/>
 
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">

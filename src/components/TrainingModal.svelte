@@ -61,29 +61,32 @@
     }
 
     function payloadFromForm(modalId: string): TrainingPayload {
-        let dateFromForm = new Date();
-        dateFromForm.setFullYear(
-            ModalUtils.getFormData(modalId, YEAR_SUFFIX.substring(1)),
-            ModalUtils.getFormData(modalId, MONTH_SUFFIX.substring(1)) - 1,
-            ModalUtils.getFormData(modalId, DAY_SUFFIX.substring(1)));
+        
+        let year = ModalUtils.getFormData(modalId, YEAR_SUFFIX.substring(1));
+        let month = ModalUtils.getFormData(modalId, MONTH_SUFFIX.substring(1));
+        let day = ModalUtils.getFormData(modalId, DAY_SUFFIX.substring(1));
+
+        if(parseInt(month) < 10) {
+            month = "0" + month;
+        }
 
         let payload: TrainingPayload = {
-            date: dateFromForm,
-            exerciseEntries: []
+            date: `${year}-${month}-${day}`,
+            entries: []
         };
 
         for(let entryIndex = 0; entryIndex < entrySetCounter.length; entryIndex++) {
             let entryPayload: TrainingEntry = {
                 id: ModalUtils.getFormData(modalId, 
-                    StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT.substring(1), entryIndex)),
-                exerciseId: ModalUtils.getFormData(modalId, 
+                    StringUtils.format(ENTRY_ID_SUFFIX_FORMAT.substring(1), entryIndex)),
+                exercise_id: ModalUtils.getFormData(modalId, 
                     StringUtils.format(ENTRY_EXERCISE_ID_SUFFIX_FORMAT.substring(1), entryIndex)),
                 sets: []
             };
             for(let entrySetIndex = 0; entrySetIndex < entrySetCounter[entryIndex]; entrySetIndex++) {
                 let setPayload: TrainingSet = {
                     id: ModalUtils.getFormData(modalId,
-                        StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT.substring(1), entryIndex, entrySetIndex)),
+                        StringUtils.format(ENTRY_SET_ID_SUFFIX_FORMAT.substring(1), entryIndex, entrySetIndex)),
                     repetitions: ModalUtils.getFormData(modalId, 
                         StringUtils.format(ENTRY_SET_REPETITIONS_SUFFIX_FORMAT.substring(1), entryIndex, entrySetIndex)),
                     weight: ModalUtils.getFormData(modalId, 
@@ -91,7 +94,7 @@
                 };
                 entryPayload.sets.push(setPayload);
             }
-            payload.exerciseEntries.push(entryPayload);
+            payload.entries.push(entryPayload);
         }
 
         return payload;

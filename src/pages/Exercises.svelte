@@ -6,7 +6,7 @@
     import ModalUtils from "../util/ModalUtils";
     import type { Exercise, ExercisePayload } from "../util/types";
 
-    let exerciseFacade = new ExerciseFacade();
+    let exerciseFacade: ExerciseFacade = new ExerciseFacade();
     let exercises: Exercise[] = [];
 
     const EXERCISE_ADD_MODAL_ID = "exercise-add-modal";
