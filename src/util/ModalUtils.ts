@@ -24,6 +24,10 @@ class ModalUtils {
         if(formElement.type == "checkbox") {
             return formElement.checked ? true : false;
         }
+        if(formElement.type == "number") {
+            let value: string = formElement.value;
+            return value.includes(".") ? parseFloat(value) : parseInt(value);
+        }
         return formElement.value;
     }
 
@@ -32,6 +36,10 @@ class ModalUtils {
         let formElement = form[modalId + '-' + field];
         if(formElement.type == "checkbox") {
             formElement.checked = data ? true : false;
+        }
+        if(formElement.type == "number") {
+            let value: number = data;
+            formElement.value = value.toString();
         }
         formElement.value = data;
     }
