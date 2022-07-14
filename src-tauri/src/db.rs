@@ -39,12 +39,12 @@ impl Database {
                 description VARCHAR,
                 bodyweight  BOOLEAN
             )";
-        const CREATE_TRAININGS_TABLE: &str = "
+        const CREATE_TRAININGS_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE trainings (
                 id          VARCHAR NOT NULL PRIMARY KEY,
                 date        VARCHAR NOT NULL
             )";
-        const CREATE_TRAINING_ENTRIES_TABLE: &str = "
+        const CREATE_TRAINING_ENTRIES_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE training_entries (
                 id          VARCHAR NOT NULL PRIMARY KEY,
                 exercise_id VARCHAR NOT NULL,
@@ -52,7 +52,7 @@ impl Database {
                 FOREIGN KEY (training_id) 
                     REFERENCES trainings(id)
             )";
-        const CREATE_TRAINING_SETS_TABLE: &str = "
+        const CREATE_TRAINING_SETS_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE training_sets (
                 id          VARCHAR NOT NULL PRIMARY KEY,
                 repetitions INTEGER NOT NULL,
@@ -64,9 +64,9 @@ impl Database {
 
         let create_table_statements = [
             CREATE_EXERCISES_TABLE_SQL_STATEMENT,
-            CREATE_TRAININGS_TABLE,
-            CREATE_TRAINING_ENTRIES_TABLE,
-            CREATE_TRAINING_SETS_TABLE];
+            CREATE_TRAININGS_TABLE_SQL_STATEMENT,
+            CREATE_TRAINING_ENTRIES_TABLE_SQL_STATEMENT,
+            CREATE_TRAINING_SETS_TABLE_SQL_STATEMENT];
 
         for statement in create_table_statements {
             trace!("Executing SQL statement {}", statement);
@@ -311,7 +311,7 @@ impl TrainingEntryOperations for Database {
         let mut statement = connection.prepare(UPDATE_ENTRY_SQL_STATEMENT).unwrap();
         match statement.execute(params![entry.exercise_id, entry.id]) {
             Ok(_) => {
-                info!("Insert successful");
+                info!("Update successful");
                 for set in entry.sets {
                     self.update_set(&connection, set);
                 }
