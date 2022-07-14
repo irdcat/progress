@@ -1,3 +1,4 @@
+use chrono::NaiveDate;
 use serde::{Serialize, Deserialize};
 
 #[derive(Serialize, Debug)]
@@ -32,13 +33,13 @@ pub struct TrainingEntry {
 #[derive(Serialize, Debug)]
 pub struct Training {
     pub id: String,
-    pub date: String,
+    pub date: NaiveDate,
     pub entries: Vec<TrainingEntry>
 }
 
 #[derive(Deserialize, Debug)]
 pub struct TrainingPatch {
-    pub date: String,
+    pub date: NaiveDate,
     pub entries: Vec<TrainingEntry>
 }
 
@@ -46,5 +47,5 @@ pub struct TrainingPatch {
 pub struct ExerciseDetails {
     pub repetitions: i32,
     pub weight: f64,
-    pub date: String
+    pub date: NaiveDate
 }
