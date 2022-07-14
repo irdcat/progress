@@ -2,18 +2,18 @@
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
     import TrainingModal from "../components/TrainingModal.svelte";
-    import TrainingFacade from "../util/TrainingService";
+    import TrainingService from "../util/TrainingService";
     import ModalUtils from "../util/ModalUtils";
     import type { Training, TrainingPayload } from "../util/types";
 
-    let trainingFacade: TrainingFacade = new TrainingFacade();
+    let trainingService: TrainingService = new TrainingService();
     let trainings: Training[] = [];
 
     const TRAINING_ADD_MODAL_ID = "training-add-modal";
     const TRAINING_EDIT_MODAL_ID = "training-edit-modal";
 
     onMount(async () => {
-        trainings = await trainingFacade.getTrainings();
+        trainings = await trainingService.getTrainings();
     });
 
     function openTrainingAddModal(): void {
@@ -21,20 +21,20 @@
     }
 
     async function openTrainingEditModal(id: string): Promise<void> {
-        let training: Training = await trainingFacade.getTraining(id);
+        let training: Training = await trainingService.getTraining(id);
         // TODO: Populate form data
         ModalUtils.openModal(TRAINING_EDIT_MODAL_ID);
     }
 
     async function onAddOk(data: TrainingPayload): Promise<void> {
-        await trainingFacade.addTraining(data);
-        trainings = await trainingFacade.getTrainings();
+        await trainingService.addTraining(data);
+        trainings = await trainingService.getTrainings();
     }
 
     async function onEditOk(data: TrainingPayload): Promise<void> {
         let trainingId: string = ModalUtils.getFormData(TRAINING_EDIT_MODAL_ID, "id");
-        await trainingFacade.updateTraining(trainingId, data);
-        trainings = await trainingFacade.getTrainings();
+        await trainingService.updateTraining(trainingId, data);
+        trainings = await trainingService.getTrainings();
     }
 
     function goToTrainingDetails(trainingId: string): void {

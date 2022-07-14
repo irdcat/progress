@@ -8,6 +8,6 @@ class ExerciseDetailsService {
     async getExerciseDetails(exerciseId: string): Promise<ExerciseDetails[]> {
         return await invoke(ExerciseDetailsService.GET_EXERCISE_DETAILS_COMMAND, {exerciseId: exerciseId});
     }
-}
+};
 
 export default ExerciseDetailsService;

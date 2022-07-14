@@ -23,6 +23,6 @@ class TrainingService {
     async updateTraining(trainingId: string, trainingPayload: TrainingPayload): Promise<void> {
         await invoke(TrainingService.UPDATE_TRAINING_COMMAND, {id: trainingId, training: trainingPayload});
     }
-}
+};
 
 export default TrainingService;

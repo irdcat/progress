@@ -6,14 +6,14 @@
     import ModalUtils from "../util/ModalUtils";
     import type { Exercise, ExercisePayload } from "../util/types";
 
-    let exerciseFacade: ExerciseService = new ExerciseService();
+    let exerciseService: ExerciseService = new ExerciseService();
     let exercises: Exercise[] = [];
 
     const EXERCISE_ADD_MODAL_ID = "exercise-add-modal";
     const EXERCISE_EDIT_MODAL_ID = "exercise-edit-modal";
 
     onMount(async () => {
-        exercises = await exerciseFacade.getExercises();
+        exercises = await exerciseService.getExercises();
     });
 
     function goToExerciseDetails(exerciseId): void {
@@ -25,7 +25,7 @@
     }
 
     async function openExerciseEditModal(id: string): Promise<void> {
-        let exercise: Exercise = await exerciseFacade.getExercise(id);
+        let exercise: Exercise = await exerciseService.getExercise(id);
         ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "id", exercise.id);
         ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "name", exercise.name);
         ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "description", exercise.description);
@@ -34,14 +34,14 @@
     }
 
     async function onAddOk(data: ExercisePayload): Promise<void> {
-        await exerciseFacade.addExercise(data);
-        exercises = await exerciseFacade.getExercises();
+        await exerciseService.addExercise(data);
+        exercises = await exerciseService.getExercises();
     }
 
     async function onEditOk(data: ExercisePayload): Promise<void> {
         let exerciseId: string = ModalUtils.getFormData(EXERCISE_EDIT_MODAL_ID, "id");
-        await exerciseFacade.updateExercise(exerciseId, data);
-        exercises = await exerciseFacade.getExercises();
+        await exerciseService.updateExercise(exerciseId, data);
+        exercises = await exerciseService.getExercises();
     }
 </script>
 
