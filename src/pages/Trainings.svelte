@@ -1,9 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
-    import TrainingModal from "../components/TrainingModal.svelte";
+    import TrainingModal, { TrainingModalUtils } from "../components/TrainingModal.svelte";
+    import sleep from "../util/sleep";
+    import StringUtils from "../util/StringUtils";
     import TrainingService from "../util/TrainingService";
-    import ModalUtils from "../util/ModalUtils";
     import type { Training, TrainingPayload } from "../util/types";
 
     let trainingService: TrainingService = new TrainingService();
@@ -17,13 +18,37 @@
     });
 
     function openTrainingAddModal(): void {
-        ModalUtils.openModal(TRAINING_ADD_MODAL_ID);
+        TrainingModalUtils.openModal(TRAINING_ADD_MODAL_ID);
     }
 
     async function openTrainingEditModal(id: string): Promise<void> {
         let training: Training = await trainingService.getTraining(id);
-        // TODO: Populate form data
-        ModalUtils.openModal(TRAINING_EDIT_MODAL_ID);
+        TrainingModalUtils.setEntryCount(TRAINING_EDIT_MODAL_ID, training.entries.length);
+        for(const [index, entry] of training.entries.entries()) {
+            TrainingModalUtils.setEntrySetCount(TRAINING_EDIT_MODAL_ID, index, entry.sets.length);
+        }
+        sleep(50).then(() => {
+            let dateParts = training.date.split('-');
+            TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "id", training.id);
+            TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "year", dateParts[0]);
+            TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "month", parseInt(dateParts[1]));
+            TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "day", dateParts[2]);
+            for(const [entryIndex, entry] of training.entries.entries()) {
+                TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, 
+                    StringUtils.format("entry{0}-id", entryIndex), entry.id);
+                TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, 
+                    StringUtils.format("entry{0}-exercise-id", entryIndex), entry.exercise_id);
+                for(const [setIndex, set] of training.entries[entryIndex].sets.entries()) {
+                    TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, 
+                        StringUtils.format("entry{0}-set{1}-id", entryIndex, setIndex), set.id);
+                    TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, 
+                        StringUtils.format("entry{0}-set{1}-repetitions", entryIndex, setIndex), set.repetitions);
+                    TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, 
+                        StringUtils.format("entry{0}-set{1}-weight", entryIndex, setIndex), set.weight);
+                }
+            }
+        });
+        TrainingModalUtils.openModal(TRAINING_EDIT_MODAL_ID);
     }
 
     async function onAddOk(data: TrainingPayload): Promise<void> {
@@ -32,7 +57,7 @@
     }
 
     async function onEditOk(data: TrainingPayload): Promise<void> {
-        let trainingId: string = ModalUtils.getFormData(TRAINING_EDIT_MODAL_ID, "id");
+        let trainingId: string = TrainingModalUtils.getFormData(TRAINING_EDIT_MODAL_ID, "id");
         await trainingService.updateTraining(trainingId, data);
         trainings = await trainingService.getTrainings();
     }
