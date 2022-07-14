@@ -129,15 +129,24 @@
                     <span class="label-text">Date</span>
                 </label>
                 <label class="input-group">
-                    <input type="number" placeholder="Day" id={DAY_FIELD_NAME} name={DAY_FIELD_NAME} 
-                        class="input input-bordered input-primary w-32 spin-button-none"
-                        min="1" max="31"/>
-                    <input type="number" placeholder="Month" id={MONTH_FIELD_NAME} name={MONTH_FIELD_NAME} 
-                        class="input input-bordered input-primary w-32 spin-button-none"
-                        min="1" max="12"/>
-                    <input type="number" placeholder="Year" id={YEAR_FIELD_NAME} name={YEAR_FIELD_NAME} 
-                        class="input input-bordered input-primary w-32 spin-button-none"
-                        min="2020"/>
+                    <select class="select select-primary max-w-xs"
+                        id={DAY_FIELD_NAME} name={DAY_FIELD_NAME}>
+                        {#each Array(31) as _, index}
+                            <option value={index + 1}>{index + 1}</option>
+                        {/each}
+                    </select>
+                    <select class="select select-primary !rounded-none max-w-xs"
+                        id={MONTH_FIELD_NAME} name={MONTH_FIELD_NAME}>
+                        {#each ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as name, index}
+                            <option value={index}>{name}</option>
+                        {/each}
+                    </select>
+                    <select class="select select-primary max-w-xs"
+                        id={YEAR_FIELD_NAME} name={YEAR_FIELD_NAME}>
+                        {#each Array(5) as _, index}
+                            <option value={index + 2020}>{index + 2020}</option>
+                        {/each}
+                    </select>
                 </label>
             </div>
             <div class="w-full flex flex-col">
