@@ -34,8 +34,8 @@
     onDestroy(unsubscribeLocation);
 </script>
 
-<main class="h-screen">
-    <div class="navbar h-8 min-h-8 bg-slate-100 max-w-5xl m-auto text-black">
+<main class="h-screen w-screen">
+    <div class="navbar h-8 min-h-8 bg-slate-100 m-auto text-black">
         <div class="text-sm breadcrumbs">
             <ul>
                 {#if !locationParts.length}
@@ -53,7 +53,7 @@
             </ul>            
         </div> 
     </div>
-    <div class="m-auto max-w-5xl h-[calc(100%-2rem)]">
+    <div class="m-auto w-full h-[calc(100%-2rem)]">
         <Router {routes}/>
     </div>
 </main>
