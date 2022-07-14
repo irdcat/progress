@@ -1,22 +1,22 @@
 <script lang="ts">
     import { querystring } from "svelte-spa-router";
     import { parse } from "qs";
-    import type { Exercise, Training, TrainingEntry, TrainingSet } from "../util/types";
+    import type { Exercise, Training } from "../util/types";
     import { onMount } from "svelte";
     import ExerciseService from "../util/ExerciseService";
-    import TrainingFacade from "../util/TrainingService";
+    import TrainingService from "../util/TrainingService";
 
     let params = parse($querystring);
 
-    let exerciseFacade = new ExerciseService();
-    let trainingFacade = new TrainingFacade();
+    let exerciseService = new ExerciseService();
+    let trainingService = new TrainingService();
 
     let exercises: Exercise[];
     let training: Training;
 
     onMount(async () => {
-        exercises = await exerciseFacade.getExercises();
-        training = await trainingFacade.getTraining(params.id);
+        exercises = await exerciseService.getExercises();
+        training = await trainingService.getTraining(params.id);
     });
 </script>
 
