@@ -426,6 +426,42 @@ impl TrainingOperations for Database {
     }
 }
 
+pub trait ExerciseDetailsOperations {
+    fn find_exercise_details(&self, exercise_id: String) -> Vec<ExerciseDetails>;
+}
+
+impl ExerciseDetailsOperations for Database {
+    fn find_exercise_details(&self, exercise_id: String) -> Vec<ExerciseDetails> {
+        const FIND_EXERCISE_DETAILS_SQL_STATEMENT: &str = "
+            SELECT training_sets.repetitions, training_sets.weight, trainings.date FROM training_sets
+            INNER JOIN training_entries
+            ON training_sets.entry_id = training_entries.id
+            AND training_entries.exercise_id = ?1
+            INNER JOIN trainings
+            ON training_entries.training_id = trainings.id
+            ORDER BY trainings.date
+        ";
+
+        let connection_guard = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_guard.deref();
+
+        let mut statement = connection.prepare(FIND_EXERCISE_DETAILS_SQL_STATEMENT).unwrap();
+        let exercise_details_iterator = statement.query_map([exercise_id], |row| {
+            return Ok(ExerciseDetails{
+                repetitions: row.get(0).unwrap(),
+                weight: row.get(1).unwrap(),
+                date: row.get(2).unwrap()
+            });
+        }).unwrap();
+
+        let mut result = Vec::new();
+        for exercise_details in exercise_details_iterator {
+            result.push(exercise_details.unwrap());
+        }
+        return result;
+    }
+}
+
 pub struct DatabaseState(Database);
 
 impl DatabaseState {

@@ -19,7 +19,6 @@ fn get_exercises(db_state: tauri::State<DatabaseState>) -> Vec<Exercise> {
     info!("Invoking get_exercises command");
     let db = db_state.get_db();
     return db.find_exercises();
-    
 }
 
 #[tauri::command]
@@ -71,6 +70,13 @@ fn update_training(db_state: tauri::State<DatabaseState>, id: String, training: 
     db.update_training(&id, training); 
 }
 
+#[tauri::command]
+fn get_exercise_details(db_state: tauri::State<DatabaseState>, exercise_id: String) -> Vec<ExerciseDetails> {
+    info!("Invoking get_exercise_details with parameters: {{ id: {} }}", exercise_id);
+    let db = db_state.get_db();
+    return db.find_exercise_details(exercise_id);
+}
+
 fn main() {
     SimpleLogger::new().init().unwrap();
     info!("Running application");
@@ -83,7 +89,8 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             get_exercises, get_exercise, add_exercise, update_exercise,
-            get_trainings, get_training, add_training, update_training
+            get_trainings, get_training, add_training, update_training,
+            get_exercise_details
             ])
         .run(tauri::generate_context!());
     match result {

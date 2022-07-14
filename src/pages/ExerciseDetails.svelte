@@ -2,28 +2,48 @@
     import { LinkedChart, LinkedLabel, LinkedValue } from "svelte-tiny-linked-charts";
     import { querystring } from "svelte-spa-router";
     import { parse } from "qs";
+    import ExerciseDetailsService from "../util/ExerciseDetailsService";
+    import { onMount } from "svelte";
+    import type { ExerciseDetails } from "../util/types";
 
     let params = parse($querystring)
+    let exerciseDetailsService = new ExerciseDetailsService();
 
-    function generateFakeData(times, min, max) {
-        const data = {};
-        const date = new Date("2022-03-01T00:00:00Z");
-
-        for(let i=0; i<times; i++) {
-            const setDate = date.setDate(date.getDate() + 1);
-            const formattedDate = new Date(setDate).toISOString().substring(0, 10);
-
-            data[formattedDate] = Math.floor(Math.random() * (max - min)) + min;
-        }
-        return data;
-    }
-
-    let volumes = generateFakeData(50, 1000, 3000);
+    let volumes = {};
     let avgVolumes = {};
-    for(const [key, value] of Object.entries(volumes)) {
-        avgVolumes[key] = Math.floor(value / 3);
-    }
-    let intensities = generateFakeData(50, 30, 100);
+    let intensities = {};
+
+    onMount(async () => {
+        type SetDetails = {
+            repetitions: number,
+            weight: number
+        };
+
+        let exerciseDetails: ExerciseDetails[] = await exerciseDetailsService.getExerciseDetails(params.id);
+        let exerciseDetailsMap: Map<string, SetDetails[]> = new Map();
+        
+        for(const data of exerciseDetails) {
+            if(exerciseDetailsMap.has(data.date)) {
+                exerciseDetailsMap.get(data.date).push({repetitions: data.repetitions, weight: data.weight});
+            } else {
+                exerciseDetailsMap.set(data.date, [{repetitions: data.repetitions, weight: data.weight}]);
+            }
+        }
+
+        for(const entry of exerciseDetailsMap) {
+            let date = entry[0];
+            let setDetails = entry[1];
+            
+            let volumeValue = setDetails.map((set) => set.repetitions * set.weight)
+                .reduce((totalVolume, setVolume) => totalVolume + setVolume);
+            volumes[date] = volumeValue.toFixed(2);
+            let avgVolumeValue = volumes[date] / setDetails.length;
+            avgVolumes[date] = avgVolumeValue.toFixed(2);
+            let intensityValue = setDetails.map((set) => set.weight)
+                .reduce((totalIntensity, intensity) => totalIntensity + intensity) / setDetails.length;
+            intensities[date] = intensityValue.toFixed(2);
+        }
+    });
 </script>
 
 <div class="w-full flex flex-col">
@@ -72,7 +92,7 @@
     </div>
     <div class="flex grow p-2 bg-base-100">
         <p class="grow font-semibold text-lg leading-8 uppercase">
-            Intensity
+            Average intensity pet set
         </p>
     </div>
     <div class="flex grow p-2 items-end">

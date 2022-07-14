@@ -34,9 +34,16 @@ type TrainingPayload = {
     entries: TrainingEntry[]
 };
 
+type ExerciseDetails = {
+    repetitions: number,
+    weight: number,
+    date: string
+};
+
 export type {
     Exercise, 
     ExercisePayload,
     TrainingSet, TrainingEntry, Training,
-    TrainingPayload
+    TrainingPayload,
+    ExerciseDetails
 }

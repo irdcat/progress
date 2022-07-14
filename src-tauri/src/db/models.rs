@@ -41,3 +41,10 @@ pub struct TrainingPatch {
     pub date: String,
     pub entries: Vec<TrainingEntry>
 }
+
+#[derive(Serialize)]
+pub struct ExerciseDetails {
+    pub repetitions: i32,
+    pub weight: f64,
+    pub date: String
+}
