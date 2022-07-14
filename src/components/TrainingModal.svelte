@@ -1,9 +1,37 @@
+<script lang="ts" context="module">
+    import { writable, type Writable } from "svelte/store";
+
+    let entrySetCounters: Writable<Map<string, number[]>> = writable(new Map());
+
+    class TrainingModalUtils extends ModalUtils {
+        
+        static setEntryCount(modalId: string, entryCount: number): void {
+            entrySetCounters.update((map) => {
+                map.set(modalId, new Array<number>(entryCount));
+                return map;
+            });
+        }
+
+        static setEntrySetCount(modalId: string, entryIndex: number, entrySetCount: number): void {
+            entrySetCounters.update((map) => {
+                if(map.get(modalId).length <= entryIndex) {
+                    throw `Modal with id ${modalId} does not have entry with index ${entryIndex}`;
+                }
+                map.get(modalId)[entryIndex] = entrySetCount;
+                return map;
+            });
+        }
+    };
+
+    export { TrainingModalUtils };
+</script>
+
 <script lang="ts">
     import type { TrainingEntry, TrainingPayload, TrainingSet } from "../util/types";
     import ModalUtils from "../util/ModalUtils";
     import StringUtils from "../util/StringUtils";
     import ExerciseService from "../util/ExerciseService";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
 
     let exerciseFacade: ExerciseService = new ExerciseService();
 
@@ -38,8 +66,13 @@
     const ENTRY_SET_WEIGHT_SUFFIX_FORMAT = "-entry{0}-set{1}-weight";
     const ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT = mId + ENTRY_SET_WEIGHT_SUFFIX_FORMAT;
 
-    let entrySetCounter: number[] = [];
     let exercises: {id: string, name: string}[] = [];
+    let entrySetCounter: number[];
+    entrySetCounters.update((map) => map.set(mId, []));
+
+    let unsubscribeEntrySetCounter = entrySetCounters.subscribe((map) => {
+        entrySetCounter = map.get(mId);
+    });
 
     onMount(async () => {
         for(let exercise of (await exerciseFacade.getExercises())) {
@@ -47,17 +80,27 @@
         }
     });
 
+    onDestroy(unsubscribeEntrySetCounter);
+
     function cleanup(): void {
-        entrySetCounter = [];
+        entrySetCounters.update((map) => {
+            map.set(mId, []);
+            return map;
+        });
     }
 
     function addNewEntry(): void {
-        entrySetCounter = [...entrySetCounter, 0];
+        entrySetCounters.update((map) => {
+            map.get(mId).push(0);
+            return map;
+        })
     }
 
     function addNewEntrySet(entry: number): void {
-        entrySetCounter[entry] += 1;
-        entrySetCounter = [...entrySetCounter];
+        entrySetCounters.update((map) => {
+            map.get(mId)[entry] += 1;
+            return map;
+        })
     }
 
     function payloadFromForm(modalId: string): TrainingPayload {
@@ -138,7 +181,7 @@
                     <select class="select select-primary !rounded-none max-w-xs"
                         id={MONTH_FIELD_NAME} name={MONTH_FIELD_NAME}>
                         {#each ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"] as name, index}
-                            <option value={index}>{name}</option>
+                            <option value={index+1}>{name}</option>
                         {/each}
                     </select>
                     <select class="select select-primary max-w-xs"
