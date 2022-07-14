@@ -2,7 +2,7 @@
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
     import TrainingModal from "../components/TrainingModal.svelte";
-    import TrainingFacade from "../util/TrainingFacade";
+    import TrainingFacade from "../util/TrainingService";
     import ModalUtils from "../util/ModalUtils";
     import type { Training, TrainingPayload } from "../util/types";
 

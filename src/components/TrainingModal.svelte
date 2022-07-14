@@ -2,10 +2,10 @@
     import type { TrainingEntry, TrainingPayload, TrainingSet } from "../util/types";
     import ModalUtils from "../util/ModalUtils";
     import StringUtils from "../util/StringUtils";
-    import ExerciseFacade from "../util/ExerciseFacade";
+    import ExerciseService from "../util/ExerciseService";
     import { onMount } from "svelte";
 
-    let exerciseFacade: ExerciseFacade = new ExerciseFacade();
+    let exerciseFacade: ExerciseService = new ExerciseService();
 
     export let mId: string;
     export let caption: string = "";

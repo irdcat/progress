@@ -3,12 +3,12 @@
     import { parse } from "qs";
     import type { Exercise, Training, TrainingEntry, TrainingSet } from "../util/types";
     import { onMount } from "svelte";
-    import ExerciseFacade from "../util/ExerciseFacade";
-    import TrainingFacade from "../util/TrainingFacade";
+    import ExerciseService from "../util/ExerciseService";
+    import TrainingFacade from "../util/TrainingService";
 
     let params = parse($querystring);
 
-    let exerciseFacade = new ExerciseFacade();
+    let exerciseFacade = new ExerciseService();
     let trainingFacade = new TrainingFacade();
 
     let exercises: Exercise[];

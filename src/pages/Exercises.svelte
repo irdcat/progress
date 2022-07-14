@@ -2,11 +2,11 @@
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
     import ExerciseModal from "../components/ExerciseModal.svelte";
-    import ExerciseFacade from "../util/ExerciseFacade";
+    import ExerciseService from "../util/ExerciseService";
     import ModalUtils from "../util/ModalUtils";
     import type { Exercise, ExercisePayload } from "../util/types";
 
-    let exerciseFacade: ExerciseFacade = new ExerciseFacade();
+    let exerciseFacade: ExerciseService = new ExerciseService();
     let exercises: Exercise[] = [];
 
     const EXERCISE_ADD_MODAL_ID = "exercise-add-modal";
