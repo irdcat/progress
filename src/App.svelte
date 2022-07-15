@@ -6,6 +6,7 @@
     import ExerciseDetails from "./pages/ExerciseDetails.svelte";
     import Trainings from "./pages/Trainings.svelte";
     import TrainingDetails from "./pages/TrainingDetails.svelte";
+    import { appWindow } from '@tauri-apps/api/window'
     
     const routes = {
         "/": Home,
@@ -35,8 +36,9 @@
 </script>
 
 <main class="h-screen w-screen overflow-hidden select-none">
-    <div class="navbar h-8 min-h-8 bg-slate-100 m-auto text-black">
-        <div class="text-sm breadcrumbs">
+    <div class="navbar h-8 min-h-8 bg-slate-100 m-auto text-black flex pr-0"
+        on:mousedown={async (_) => await appWindow.startDragging()}>
+        <div class="grow text-sm breadcrumbs">
             <ul>
                 {#if !locationParts.length}
                     <li class="text-md normal-case font-semibold">Progress</li>
@@ -51,7 +53,21 @@
                     {/if}
                 {/each}
             </ul>            
-        </div> 
+        </div>
+        <div id="sysmenu" class="grow-0">
+            <div id="sysmenu-minimize" on:click={async () => await appWindow.minimize()}
+                class="inline-flex justify-center items-center w-9 h-8 hover:bg-gray-400">
+                <img src="https://api.iconify.design/mdi:window-minimize.svg" alt="minimize"/>
+            </div>
+            <div id="sysmenu-maximize" on:click={async () => await appWindow.toggleMaximize()}
+                class="inline-flex justify-center items-center w-9 h-8 hover:bg-gray-400">
+                <img src="https://api.iconify.design/mdi:window-maximize.svg" alt="maximize"/>
+            </div>
+            <div id="sysmenu-close" on:click={async () => await appWindow.close()}
+                class="inline-flex justify-center items-center w-9 h-8 hover:bg-red-400">
+                <img src="https://api.iconify.design/mdi:close.svg" alt="close"/>
+            </div>
+        </div>
     </div>
     <div class="m-auto w-full overflow-y-auto h-[calc(100%-2rem)]">
         <Router {routes}/>
