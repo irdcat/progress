@@ -2,6 +2,8 @@
 
 Desktop app for analyzing progress in strength training. Whole setup along with database is serverless. Database is kept in single file (backed by SQLite3).
 
+![Screen from app](images/training-details.png)
+
 ## Stuff used in the project
 
 Backend (Rust)
