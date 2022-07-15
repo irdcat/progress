@@ -33,7 +33,7 @@ Frontend (JavaScript, TypeScript)
 - MSVC v143 - VS 2022 C++
 - WebView2 (can be obtained from Evergreen Bootstrapper https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section)
 
-All of above can be installed using Microsoft C++ Build Tools (https://visualstudio.microsoft.com/pl/visual-cpp-build-tools/)
+All of above (except WebView2) can be installed using Microsoft C++ Build Tools (https://visualstudio.microsoft.com/pl/visual-cpp-build-tools/)
 
 ### Setting up project
 
