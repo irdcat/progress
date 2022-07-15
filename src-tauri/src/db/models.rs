@@ -6,14 +6,18 @@ pub struct Exercise {
     pub id: String,
     pub name: String,
     pub description: String,
-    pub bodyweight: bool
+    pub bodyweight: bool,
+    pub unilateral: bool,
+    pub double_weight: bool
 }
 
 #[derive(Deserialize, Debug)]
 pub struct ExercisePatch {
     pub name: String,
     pub description: String,
-    pub bodyweight: bool
+    pub bodyweight: bool,
+    pub unilateral: bool,
+    pub double_weight: bool
 }
 
 #[derive(Serialize, Deserialize, Debug)]

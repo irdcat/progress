@@ -1,13 +1,11 @@
 pub mod models;
 
-use std::{sync::{Arc, Mutex}, ops::Deref};
+use std::{sync::{Arc, Mutex}, ops::Deref, fs::create_dir_all};
 use log::{trace, info, error};
 use rusqlite::{Connection, OpenFlags};
 use uuid::Uuid;
 
 use models::*;
-
-const DEFAULT_DATABASE_FILE: &str = "test.db";
 
 pub struct Database {
     connection_arc_mutex: Arc<Mutex<Connection>>,
@@ -19,7 +17,9 @@ impl Database {
     }
 
     fn establish_connection(mut path: String) -> Connection {
+        const DEFAULT_DATABASE_FILE: &str = "progress.db";
         path.push_str(if path.contains("\\") {"\\"} else {"/"});
+        create_dir_all(&path).unwrap();
         path.push_str(DEFAULT_DATABASE_FILE);
         match Connection::open_with_flags(&path, OpenFlags::SQLITE_OPEN_READ_WRITE) {
             Ok(c) => return c,
@@ -34,30 +34,32 @@ impl Database {
     fn initialize_db_model(c: &Connection) {
         const CREATE_EXERCISES_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE exercises (
-                id          VARCHAR NOT NULL PRIMARY KEY,
-                name        VARCHAR NOT NULL,
-                description VARCHAR,
-                bodyweight  BOOLEAN
+                id            VARCHAR NOT NULL PRIMARY KEY,
+                name          VARCHAR NOT NULL,
+                description   VARCHAR,
+                bodyweight    BOOLEAN,
+                unilateral    BOOLEAN,
+                double_weight BOOLEAN
             )";
         const CREATE_TRAININGS_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE trainings (
-                id          VARCHAR NOT NULL PRIMARY KEY,
-                date        VARCHAR NOT NULL
+                id            VARCHAR NOT NULL PRIMARY KEY,
+                date          VARCHAR NOT NULL
             )";
         const CREATE_TRAINING_ENTRIES_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE training_entries (
-                id          VARCHAR NOT NULL PRIMARY KEY,
-                exercise_id VARCHAR NOT NULL,
-                training_id VARCHAR NOT NULL,
+                id            VARCHAR NOT NULL PRIMARY KEY,
+                exercise_id   VARCHAR NOT NULL,
+                training_id   VARCHAR NOT NULL,
                 FOREIGN KEY (training_id) 
                     REFERENCES trainings(id)
             )";
         const CREATE_TRAINING_SETS_TABLE_SQL_STATEMENT: &str = "
             CREATE TABLE training_sets (
-                id          VARCHAR NOT NULL PRIMARY KEY,
-                repetitions INTEGER NOT NULL,
-                weight      REAL NOT NULL,
-                entry_id    VARCHAR NOT NULL,
+                id                 VARCHAR NOT NULL PRIMARY KEY,
+                repetitions        INTEGER NOT NULL,
+                weight             REAL NOT NULL,
+                entry_id           VARCHAR NOT NULL,
                 FOREIGN KEY (entry_id) 
                     REFERENCES training_entries (id)
             )";
@@ -95,7 +97,9 @@ impl ExercisesOperations for Database {
                 id: row.get(0).unwrap(),
                 name: row.get(1).unwrap(),
                 description: row.get(2).unwrap(),
-                bodyweight: row.get(3).unwrap()
+                bodyweight: row.get(3).unwrap(),
+                unilateral: row.get(4).unwrap(),
+                double_weight: row.get(5).unwrap()
             });
         }).unwrap();
 
@@ -118,7 +122,9 @@ impl ExercisesOperations for Database {
                 id: row.get(0).unwrap(),
                 name: row.get(1).unwrap(),
                 description: row.get(2).unwrap(),
-                bodyweight: row.get(3).unwrap()
+                bodyweight: row.get(3).unwrap(),
+                unilateral: row.get(4).unwrap(),
+                double_weight: row.get(5).unwrap()
             });
         });
         
@@ -126,14 +132,14 @@ impl ExercisesOperations for Database {
     }
 
     fn add_exercise(&self, exercise: ExercisePatch) {
-        const ADD_EXERCISE_SQL_STATEMENT: &str = "INSERT INTO exercises (id, name, description, bodyweight) VALUES (?1, ?2, ?3, ?4)";
+        const ADD_EXERCISE_SQL_STATEMENT: &str = "INSERT INTO exercises (id, name, description, bodyweight, unilateral, double_weight) VALUES (?1, ?2, ?3, ?4, ?5, ?6)";
 
         let connection_guard = self.connection_arc_mutex.lock().unwrap();
         let connection = connection_guard.deref();
 
         let uuid = Uuid::new_v4().as_hyphenated().to_string();
         let mut statement = connection.prepare(ADD_EXERCISE_SQL_STATEMENT).unwrap();
-        match statement.execute(params![uuid, exercise.name, exercise.description, exercise.bodyweight]) {
+        match statement.execute(params![uuid, exercise.name, exercise.description, exercise.bodyweight, exercise.unilateral, exercise.double_weight]) {
             Ok(_) => info!("Insert successful"),
             Err(err) => {
                 error!("Insert failed: {}", err);
@@ -143,13 +149,13 @@ impl ExercisesOperations for Database {
     }
 
     fn update_exercise(&self, exercise_id: &String, exercise: ExercisePatch) {
-        const UPDATE_EXERCISE_SQL_STATEMENT: &str = "UPDATE exercises SET name = ?1, description = ?2, bodyweight = ?3 WHERE id = ?4";
+        const UPDATE_EXERCISE_SQL_STATEMENT: &str = "UPDATE exercises SET name = ?1, description = ?2, bodyweight = ?3, unilateral = ?4, double_weight = ?5 WHERE id = ?6";
 
         let connection_guard = self.connection_arc_mutex.lock().unwrap();
         let connection = connection_guard.deref();
 
         let mut statement = connection.prepare(UPDATE_EXERCISE_SQL_STATEMENT).unwrap();
-        match statement.execute(params![exercise.name, exercise.description, exercise.bodyweight, exercise_id]) {
+        match statement.execute(params![exercise.name, exercise.description, exercise.bodyweight, exercise.unilateral, exercise.double_weight, exercise_id]) {
             Ok(_) => info!("Update successful"),
             Err(err) => {
                 error!("Update failed: {}", err);

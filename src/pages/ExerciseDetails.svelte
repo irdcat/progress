@@ -4,14 +4,18 @@
     import { parse } from "qs";
     import ExerciseDetailsService from "../util/ExerciseDetailsService";
     import { onMount } from "svelte";
-    import type { ExerciseDetails } from "../util/types";
+    import type { Exercise, ExerciseDetails } from "../util/types";
+    import ExerciseService from "../util/ExerciseService";
 
     let params = parse($querystring)
+    let exerciseService = new ExerciseService();
     let exerciseDetailsService = new ExerciseDetailsService();
 
-    let volumes = {};
-    let avgVolumes = {};
-    let intensities = {};
+    let volumes: Object = {};
+    let avgVolumes: Object = {};
+    let intensities: Object = {};
+
+    let exercise: Exercise;
 
     onMount(async () => {
         type SetDetails = {
@@ -19,6 +23,7 @@
             weight: number
         };
 
+        exercise = await exerciseService.getExercise(params.id);
         let exerciseDetails: ExerciseDetails[] = await exerciseDetailsService.getExerciseDetails(params.id);
         let exerciseDetailsMap: Map<string, SetDetails[]> = new Map();
         
@@ -49,13 +54,40 @@
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">
         <p class="grow font-semibold text-xl leading-8 uppercase">
-            Exercise {params.id}
+            {#if exercise != undefined}
+                Exercise: {exercise.name}
+            {:else}
+                Exercise {params.id}
+            {/if}
         </p>
-        <p class="grow-0 w-28 font-semibold text-xl leading-8 uppercase text-left">
-            Date
+    </div>
+    <div class="flex grow p-2">
+        <p class="grow font-semibold text-lg leading-8 uppercase">
+            Description
         </p>
-        <p class="grow-0 w-28 font-semibold text-xl leading-8 uppercase text-left">
-            Value
+    </div>
+    <div class="flex grow p-2">
+        <p class="grow">
+            {#if exercise != undefined}
+                {exercise.description}
+            {/if}
+        </p>
+    </div>
+    <div class="flex grow p-2 font-semibold">
+        <p class="grow">
+            {#if exercise != undefined}
+                Bodyweight: {exercise.bodyweight ? "Yes" : "No"}
+            {/if}
+        </p>
+        <p class="grow">
+            {#if exercise != undefined}
+                Unilateral: {exercise.unilateral ? "Yes" : "No"}
+            {/if}
+        </p>
+        <p class="grow">
+            {#if exercise != undefined}
+                {exercise.double_weight ? "Double weight" : "Single weight"}
+            {/if}
         </p>
     </div>
     <div class="flex grow p-2 bg-base-100">
@@ -65,7 +97,11 @@
     </div>
     <div class="flex grow p-2 items-end">
         <div class="grow">
-            <LinkedChart data={volumes} width="700" grow="true" height="100" align="left" fill="#20ff20" linked="link" uid="volume"/>
+            {#if Object.keys(volumes).length == 0}
+                No data
+            {:else}
+                <LinkedChart data={volumes} width="700" grow="true" height="100" align="left" fill="#20ff20" linked="link" uid="volume"/>
+            {/if}
         </div>
         <p class="grow-0 w-28 text-left font-medium">
             <LinkedLabel linked="link"/>
@@ -81,7 +117,11 @@
     </div>
     <div class="flex grow p-2 items-end">
         <div class="grow">
-            <LinkedChart data={avgVolumes} width="700" grow="true" height="100" align="left" fill="#50ff50" linked="link" uid="avgVolume"/>
+            {#if Object.keys(avgVolumes).length == 0}
+                No data
+            {:else}
+                <LinkedChart data={avgVolumes} width="700" grow="true" height="100" align="left" fill="#50ff50" linked="link" uid="avgVolume"/>
+            {/if}
         </div>
         <p class="grow-0 w-28 text-left font-medium">
             <LinkedLabel linked="link"/>
@@ -97,7 +137,11 @@
     </div>
     <div class="flex grow p-2 items-end">
         <div class="grow">
-            <LinkedChart data={intensities} width="700" grow="true" height="100" align="left" fill="#ff2020" linked="link" uid="intensity"/>
+            {#if Object.keys(intensities).length == 0}
+                No data
+            {:else}
+                <LinkedChart data={intensities} width="700" grow="true" height="100" align="left" fill="#ff2020" linked="link" uid="intensity"/>
+            {/if}
         </div>
         <p class="grow-0 w-28 text-left font-medium">
             <LinkedLabel linked="link"/>
