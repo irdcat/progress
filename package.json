@@ -1,6 +1,6 @@
 {
-  "name": "svelte-app",
-  "version": "1.0.0",
+  "name": "progress",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "build": "npm run styles && rollup -c",
