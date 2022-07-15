@@ -32,6 +32,7 @@
     import StringUtils from "../util/StringUtils";
     import ExerciseService from "../util/ExerciseService";
     import { onDestroy, onMount } from "svelte";
+    import { Tabs, TabList, TabPanel, Tab } from "./tabs";
 
     let exerciseFacade: ExerciseService = new ExerciseService();
 
@@ -208,79 +209,88 @@
                         </p>
                     </div>
                 {:else}
-                    {#each entrySetCounter as entrySetCount, entryIndex}
-                        <div class="flex flex-col grow p-2">
-                            <div class="flex grow p-2">
-                                <input type="hidden" value=""
-                                    id={StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT, entryIndex)}
-                                    name={StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT, entryIndex)}/>
-                                <div class="form-control w-full max-w-xs">
-                                    <label class="label" for={StringUtils.format(ENTRY_EXERCISE_ID_FIELD_NAME_FORMAT, entryIndex)}>
-                                        <span class="label-text">Exercise</span>
-                                    </label>
-                                    <select class="select select-primary w-full max-w-xs"
-                                        id={StringUtils.format(ENTRY_EXERCISE_ID_FIELD_NAME_FORMAT, entryIndex)}
-                                        name={StringUtils.format(ENTRY_EXERCISE_ID_FIELD_NAME_FORMAT, entryIndex)}>
-                                        {#each exercises as exercise}
-                                            <option value={exercise.id}>{exercise.name}</option>
-                                        {/each}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="flex grow p-2 bg-base-200">
-                                <p class="grow font-semibold text-lg uppercase">
-                                    Sets
-                                </p>
-                                <div class="grow-0">
-                                    <button type="button" class="btn btn-secondary btn-xs" on:click={() => addNewEntrySet(entryIndex)}>Add</button>
-                                </div>
-                            </div>
-                            {#if entrySetCounter[entryIndex] == 0}
-                                <div class="flex grow p-2">
-                                    <p class="grow text-md font-normal">
-                                        No sets
-                                    </p>
-                                </div>
-                            {:else}    
-                                {#each Array(entrySetCount) as _, entrySetIndex}
-                                    <div class="flex gap-x-3 grow p-2 items-end">
+                    <Tabs>
+                        <TabList>
+                            {#each entrySetCounter as _, entryIndex}
+                                <Tab>Exercise {entryIndex + 1}</Tab>
+                            {/each}
+                        </TabList>
+                        {#each entrySetCounter as entrySetCount, entryIndex}
+                            <TabPanel>
+                                <div class="flex flex-col grow p-2">
+                                    <div class="flex grow p-2">
                                         <input type="hidden" value=""
-                                            id={StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}
-                                            name={StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}/>
-                                        <div class="grow-0">
-                                            <div class="form-control w-full max-w-xs">
-                                                <label class="label" for={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}>
-                                                    <span class="label-text">Repetitions</span>
-                                                </label>
-                                                <input type="number"
-                                                    class="input input-bordered input-primary w-32 spin-button-none"
-                                                    placeholder="Reps"
-                                                    id={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}
-                                                    name={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}/>
-                                            </div>
-                                        </div>
-                                        <div class="grow-0">
-                                            <p class="text-lg font-semibold uppercase">
-                                                X
-                                            </p>
-                                        </div>
-                                        <div class="grow-0">
-                                            <div class="form-control w-full max-w-xs">
-                                                <label class="label" for={StringUtils.format(ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}>
-                                                    <span class="label-text">Weight</span>
-                                                </label>
-                                                <input type="number"
-                                                    class="input input-bordered input-primary w-32 spin-button-none"
-                                                    placeholder="Weight"
-                                                    id={StringUtils.format(ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}
-                                                    name={StringUtils.format(ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}/>
-                                            </div>
+                                            id={StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT, entryIndex)}
+                                            name={StringUtils.format(ENTRY_ID_FIELD_NAME_FORMAT, entryIndex)}/>
+                                        <div class="form-control w-full max-w-xs">
+                                            <label class="label" for={StringUtils.format(ENTRY_EXERCISE_ID_FIELD_NAME_FORMAT, entryIndex)}>
+                                                <span class="label-text">Exercise</span>
+                                            </label>
+                                            <select class="select select-primary w-full max-w-xs"
+                                                id={StringUtils.format(ENTRY_EXERCISE_ID_FIELD_NAME_FORMAT, entryIndex)}
+                                                name={StringUtils.format(ENTRY_EXERCISE_ID_FIELD_NAME_FORMAT, entryIndex)}>
+                                                {#each exercises as exercise}
+                                                    <option value={exercise.id}>{exercise.name}</option>
+                                                {/each}
+                                            </select>
                                         </div>
                                     </div>
-                                {/each}
-                            {/if}
-                        </div>
-                    {/each}
+                                    <div class="flex grow p-2 bg-base-200">
+                                        <p class="grow font-semibold text-lg uppercase">
+                                            Sets
+                                        </p>
+                                        <div class="grow-0">
+                                            <button type="button" class="btn btn-secondary btn-xs" on:click={() => addNewEntrySet(entryIndex)}>Add</button>
+                                        </div>
+                                    </div>
+                                    {#if entrySetCounter[entryIndex] == 0}
+                                        <div class="flex grow p-2">
+                                            <p class="grow text-md font-normal">
+                                                No sets
+                                            </p>
+                                        </div>
+                                    {:else}    
+                                        {#each Array(entrySetCount) as _, entrySetIndex}
+                                            <div class="flex gap-x-3 grow p-2 items-end">
+                                                <input type="hidden" value=""
+                                                    id={StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}
+                                                    name={StringUtils.format(ENTRY_SET_ID_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}/>
+                                                <div class="grow-0">
+                                                    <div class="form-control w-full max-w-xs">
+                                                        <label class="label" for={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}>
+                                                            <span class="label-text">Repetitions</span>
+                                                        </label>
+                                                        <input type="number"
+                                                            class="input input-bordered input-primary w-32 spin-button-none"
+                                                            placeholder="Reps"
+                                                            id={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}
+                                                            name={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}/>
+                                                    </div>
+                                                </div>
+                                                <div class="grow-0">
+                                                    <p class="text-lg font-semibold uppercase">
+                                                        X
+                                                    </p>
+                                                </div>
+                                                <div class="grow-0">
+                                                    <div class="form-control w-full max-w-xs">
+                                                        <label class="label" for={StringUtils.format(ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}>
+                                                            <span class="label-text">Weight</span>
+                                                        </label>
+                                                        <input type="number"
+                                                            class="input input-bordered input-primary w-32 spin-button-none"
+                                                            placeholder="Weight"
+                                                            id={StringUtils.format(ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}
+                                                            name={StringUtils.format(ENTRY_SET_WEIGHT_FIELD_NAME_FORMAT, entryIndex, entrySetIndex)}/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {/each}
+                                    {/if}
+                                </div>
+                            </TabPanel>
+                        {/each}
+                    </Tabs>
                 {/if}
             </div>
         </form>
