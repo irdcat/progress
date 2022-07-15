@@ -22,18 +22,18 @@ Frontend (JavaScript, TypeScript)
 
 ### Prequisites
 
-- Rust
-- Node
-- npm
+- Rust (https://www.rust-lang.org/)
+- Node (https://nodejs.org/en/)
+- npm 
 
 #### Windows prequisites
 
 - Visual Studio C++ Build Tools
 - Windows 10 SDK
 - MSVC v143 - VS 2022 C++
-- WebView2 (can be obtained from Evergreen Bootstrapper)
+- WebView2 (can be obtained from Evergreen Bootstrapper https://developer.microsoft.com/en-us/microsoft-edge/webview2/#download-section)
 
-All of above can be installed using Microsoft C++ Build Tools
+All of above can be installed using Microsoft C++ Build Tools (https://visualstudio.microsoft.com/pl/visual-cpp-build-tools/)
 
 ### Setting up project
 
