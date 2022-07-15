@@ -34,7 +34,7 @@
     onDestroy(unsubscribeLocation);
 </script>
 
-<main class="h-screen w-screen">
+<main class="h-screen w-screen overflow-hidden select-none">
     <div class="navbar h-8 min-h-8 bg-slate-100 m-auto text-black">
         <div class="text-sm breadcrumbs">
             <ul>
@@ -53,7 +53,7 @@
             </ul>            
         </div> 
     </div>
-    <div class="m-auto w-full h-[calc(100%-2rem)]">
+    <div class="m-auto w-full overflow-y-auto h-[calc(100%-2rem)]">
         <Router {routes}/>
     </div>
 </main>
