@@ -1,6 +1,6 @@
 # Progress
 
-Work in progress
+Desktop app for analyzing progress in strength training. Whole setup along with database is serverless. Database is kept in single file (backed by SQLite3).
 
 ## Stuff used in the project
 
@@ -17,3 +17,34 @@ Frontend (JavaScript, TypeScript)
 - tailwind-css - CSS framework to avoid writing css code
 - DaisyUI - Tailwind CSS components
 - qs - Utility library for parsing query string
+
+## Dev setup
+
+### Prequisites
+
+- Rust
+- Node
+- npm
+
+#### Windows prequisites
+
+- Visual Studio C++ Build Tools
+- Windows 10 SDK
+- MSVC v143 - VS 2022 C++
+- WebView2 (can be obtained from Evergreen Bootstrapper)
+
+All of above can be installed using Microsoft C++ Build Tools
+
+### Setting up project
+
+First install NPM dependencies
+
+```bash
+    npm install
+```
+
+Run tauri application in dev mode. Command will open the application window when everything will be fine.
+
+```
+    npm run tauri dev
+```
