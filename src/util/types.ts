@@ -2,13 +2,17 @@ type Exercise = {
     id: string,
     name: string,
     description: string,
-    bodyweight: boolean
+    bodyweight: boolean,
+    unilateral: boolean,
+    double_weight: boolean
 };
 
 type ExercisePayload = {
     name: string,
     description: string,
-    bodyweight: boolean
+    bodyweight: boolean,
+    unilateral: boolean,
+    double_weight: boolean
 };
 
 type TrainingSet = {

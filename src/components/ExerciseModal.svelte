@@ -12,29 +12,35 @@
     const NAME_SUFFIX = "-name";
     const DESCRIPTION_SUFFIX = "-description";
     const BODYWEIGHT_SUFFIX = "-bodyweight";
+    const UNILATERAL_SUFFIX = "-unilateral";
+    const DOUBLE_WEIGHT_SUFFIX = "-double-weight";
 
     const FORM_NAME = mId + FORM_SUFFIX;
     const ID_FIELD_NAME = mId + ID_SUFFIX;
     const NAME_FIELD_NAME = mId + NAME_SUFFIX;
     const DESCRIPTION_FIELD_NAME = mId + DESCRIPTION_SUFFIX;
     const BODYWEIGHT_FIELD_NAME = mId + BODYWEIGHT_SUFFIX;
+    const UNILATERAL_FIELD_NAME = mId + UNILATERAL_SUFFIX;
+    const DOUBLE_WEIGHT_FIELD_NAME = mId + DOUBLE_WEIGHT_SUFFIX;
 
-    function ok(modalId: string): void {
-        let data: ExercisePayload = {
+    function payloadFromFormData(modalId: string): ExercisePayload {
+        return {
             name: ModalUtils.getFormData(modalId, "name"),
             description: ModalUtils.getFormData(modalId, "description"),
-            bodyweight: ModalUtils.getFormData(modalId, "bodyweight")
+            bodyweight: ModalUtils.getFormData(modalId, "bodyweight"),
+            unilateral: ModalUtils.getFormData(modalId, "unilateral"),
+            double_weight: ModalUtils.getFormData(modalId, "double-weight")
         };
+    }
+
+    function ok(modalId: string): void {
+        let data: ExercisePayload = payloadFromFormData(modalId);
         onOk(data);
         ModalUtils.closeModal(modalId);
     }
 
     function cancel(modalId: string): void {
-        let data: ExercisePayload = {
-            name: ModalUtils.getFormData(modalId, "name"),
-            description: ModalUtils.getFormData(modalId, "description"),
-            bodyweight: ModalUtils.getFormData(modalId, "bodyweight")
-        };
+        let data: ExercisePayload = payloadFromFormData(modalId);
         onCancel(data);
         ModalUtils.closeModal(modalId);
     }
@@ -63,6 +69,18 @@
                 <label for={BODYWEIGHT_FIELD_NAME} class="label cursor-pointer">
                     <span class="label-text">Bodyweight exercise</span>
                     <input type="checkbox" name={BODYWEIGHT_FIELD_NAME} id={BODYWEIGHT_FIELD_NAME} class="checkbox checkbox-primary"/>
+                </label>
+            </div>
+            <div class="form-control w-full max-w-xs">
+                <label for={UNILATERAL_FIELD_NAME} class="label cursor-pointer">
+                    <span class="label-text">Unilateral exercise</span>
+                    <input type="checkbox" name={UNILATERAL_FIELD_NAME} id={UNILATERAL_FIELD_NAME} class="checkbox checkbox-primary"/>
+                </label>
+            </div>
+            <div class="form-control w-full max-w-xs">
+                <label for={DOUBLE_WEIGHT_FIELD_NAME} class="label cursor-pointer">
+                    <span class="label-text">Double weight exercise</span>
+                    <input type="checkbox" name={DOUBLE_WEIGHT_FIELD_NAME} id={DOUBLE_WEIGHT_FIELD_NAME} class="checkbox checkbox-primary"/>
                 </label>
             </div>
         </form>

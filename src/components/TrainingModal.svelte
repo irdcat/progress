@@ -263,6 +263,7 @@
                                                         <input type="number"
                                                             class="input input-bordered input-primary w-32 spin-button-none"
                                                             placeholder="Reps"
+                                                            min="0"
                                                             id={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}
                                                             name={StringUtils.format(ENTRY_SET_REPETITIONS_NAME_FIELD_FORMAT, entryIndex, entrySetIndex)}/>
                                                     </div>

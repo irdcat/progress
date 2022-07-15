@@ -30,6 +30,8 @@
         ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "name", exercise.name);
         ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "description", exercise.description);
         ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "bodyweight", exercise.bodyweight);
+        ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "unilateral", exercise.unilateral);
+        ModalUtils.setFormData(EXERCISE_EDIT_MODAL_ID, "double-weight", exercise.double_weight);
         ModalUtils.openModal(EXERCISE_EDIT_MODAL_ID);
     }
 
