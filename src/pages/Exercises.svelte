@@ -1,6 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
+    import DeleteExerciseModal from "../components/DeleteExerciseModal.svelte";
     import ExerciseModal from "../components/ExerciseModal.svelte";
     import ExerciseService from "../util/ExerciseService";
     import ModalUtils from "../util/ModalUtils";
@@ -11,6 +12,7 @@
 
     const EXERCISE_ADD_MODAL_ID = "exercise-add-modal";
     const EXERCISE_EDIT_MODAL_ID = "exercise-edit-modal";
+    const EXERCISE_DELETE_MODAL_ID = "exercise-delete-modal";
 
     onMount(async () => {
         exercises = await exerciseService.getExercises();
@@ -35,6 +37,11 @@
         ModalUtils.openModal(EXERCISE_EDIT_MODAL_ID);
     }
 
+    function openExerciseDeleteModal(id: string): void {
+        ModalUtils.setFormData(EXERCISE_DELETE_MODAL_ID, "exercise-id", id);
+        ModalUtils.openModal(EXERCISE_DELETE_MODAL_ID);
+    }
+
     async function onAddOk(data: ExercisePayload): Promise<void> {
         await exerciseService.addExercise(data);
         exercises = await exerciseService.getExercises();
@@ -45,10 +52,16 @@
         await exerciseService.updateExercise(exerciseId, data);
         exercises = await exerciseService.getExercises();
     }
+
+    async function onDeleteOk(id: string): Promise<void> {
+        await exerciseService.deleteExercise(id);
+        exercises = await exerciseService.getExercises();
+    }
 </script>
 
 <ExerciseModal mId={EXERCISE_ADD_MODAL_ID} caption="Add exercise" onOk={onAddOk}/>
 <ExerciseModal mId={EXERCISE_EDIT_MODAL_ID} caption="Edit exercise" onOk={onEditOk}/>
+<DeleteExerciseModal mId={EXERCISE_DELETE_MODAL_ID} onYes={onDeleteOk}/>
 
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">
@@ -67,6 +80,7 @@
             <div class="grow-0">
                 <button class="btn btn-secondary btn-sm" on:click={() => openExerciseEditModal(id)}>Edit</button>
                 <button class="btn btn-secondary btn-sm" on:click={() => goToExerciseDetails(id)}>Details</button>
+                <button class="btn btn-error btn-sm" on:click={() => openExerciseDeleteModal(id)}>Delete</button>
             </div>
         </div>
     {/each}

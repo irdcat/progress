@@ -82,6 +82,7 @@ pub trait ExercisesOperations {
     fn find_exercise(&self, id: &String) -> Exercise;
     fn add_exercise(&self, exercise: ExercisePatch);
     fn update_exercise(&self, id: &String, exercise: ExercisePatch);
+    fn delete_exercise(&self, id: &String);
 }
 
 impl ExercisesOperations for Database {
@@ -163,6 +164,25 @@ impl ExercisesOperations for Database {
             },
         }
     }
+
+    fn delete_exercise(&self, id: &String) {
+        const DELETE_EXERCISE_SQL_STATEMENT: &str = "DELETE FROM exercises WHERE id = ?1";
+
+        let connection_guard = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_guard.deref();
+
+        let mut statement = connection.prepare(DELETE_EXERCISE_SQL_STATEMENT).unwrap();
+        match statement.execute([id]) {
+            Ok(_) => {
+                info!("Delete successful");
+                self.delete_entries_by_exercise_id(connection, id);
+            },
+            Err(err) => {
+                error!("Delete failed: {}", err);
+                error!("Statement: {}", statement.expanded_sql().unwrap());
+            },
+        }
+    }
 }
 
 pub trait TrainingSetOperations {
@@ -170,6 +190,7 @@ pub trait TrainingSetOperations {
     fn find_sets_by_entry_id(&self, connection: &Connection, entry_id: &String) -> Vec<TrainingSet>;
     fn add_set(&self, connection: &Connection, entry_id: &String, set: TrainingSet);
     fn update_set(&self, connection: &Connection, set: TrainingSet);
+    fn delete_sets_by_entry_id(&self, connection: &Connection, entry_id: &String);
 }
 
 impl TrainingSetOperations for Database {
@@ -238,13 +259,29 @@ impl TrainingSetOperations for Database {
             },
         }
     }
+
+    fn delete_sets_by_entry_id(&self, connection: &Connection, entry_id: &String) {
+        const DELETE_SET_BY_ENTRY_ID_SQL_STATEMENT: &str = "DELETE FROM training_sets WHERE entry_id = ?1";
+
+        let mut statement = connection.prepare(DELETE_SET_BY_ENTRY_ID_SQL_STATEMENT).unwrap();
+        match statement.execute([entry_id]) {
+            Ok(_) => info!("Delete succesful"),
+            Err(err) => {
+                error!("Delete failed: {}", err);
+                error!("Statement: {}", statement.expanded_sql().unwrap());
+            },
+        }
+    }
 }
 
 pub trait TrainingEntryOperations {
     fn find_entry(&self, connection: &Connection, id: &String) -> TrainingEntry;
+    fn find_entries_by_exercise_id(&self, connection: &Connection, exercise_id: &String) -> Vec<TrainingEntry>;
     fn find_entries_by_training_id(&self, connection: &Connection, training_id: &String) -> Vec<TrainingEntry>;
     fn add_entry(&self, connection: &Connection, training_id: &String, entry: TrainingEntry);
     fn update_entry(&self, connection: &Connection, entry: TrainingEntry);
+    fn delete_entries_by_training_id(&self, connection: &Connection, training_id: &String);
+    fn delete_entries_by_exercise_id(&self, connection: &Connection, exercise_id: &String);
 }
 
 impl TrainingEntryOperations for Database {
@@ -266,6 +303,30 @@ impl TrainingEntryOperations for Database {
         });
 
         return result.unwrap();
+    }
+
+    fn find_entries_by_exercise_id(&self, connection: &Connection, exercise_id: &String) -> Vec<TrainingEntry> {
+        const FIND_ENTRY_BY_EXERCISE_ID_SQL_STATEMENT: &str = "SELECT id, exercise_id FROM training_entries WHERE exercise_id = ?1";
+
+        let mut statement = connection.prepare(FIND_ENTRY_BY_EXERCISE_ID_SQL_STATEMENT).unwrap();
+        let entry_iterator = statement.query_map([exercise_id], |row| {
+            
+            let id = row.get(0).unwrap();
+            let exercise_id = row.get(1).unwrap();
+            let sets = self.find_sets_by_entry_id(&connection, &id);
+
+            return Ok(TrainingEntry{
+                id: id,
+                exercise_id: exercise_id,
+                sets: sets
+            })
+        }).unwrap();
+
+        let mut result = Vec::new();
+        for entry in entry_iterator {
+            result.push(entry.unwrap());
+        }
+        return result;
     }
 
     fn find_entries_by_training_id(&self, connection: &Connection, training_id: &String) -> Vec<TrainingEntry> {
@@ -328,6 +389,46 @@ impl TrainingEntryOperations for Database {
             },
         }
     }
+
+    fn delete_entries_by_training_id(&self, connection: &Connection, training_id: &String) {
+        const DELETE_ENTRY_BY_TRAINING_ID_SQL_STATEMENT: &str = "DELETE FROM training_entries WHERE training_id = ?1";
+
+        let mut statement = connection.prepare(DELETE_ENTRY_BY_TRAINING_ID_SQL_STATEMENT).unwrap();
+        let entries = self.find_entries_by_training_id(connection, training_id);
+        let entry_ids: Vec<&String> = entries.iter()
+            .map(|entry| &entry.id)
+            .collect();
+        for entry_id in entry_ids {
+            self.delete_sets_by_entry_id(connection, entry_id)
+        }
+        match statement.execute([training_id]) {
+            Ok(_) => info!("Delete successful"),
+            Err(err) => {
+                error!("Delete failed: {}", err);
+                error!("Statement: {}", statement.expanded_sql().unwrap());
+            },
+        }
+    }
+
+    fn delete_entries_by_exercise_id(&self, connection: &Connection, exercise_id: &String) {
+        const DELETE_ENTRY_BY_EXERCISE_ID_SQL_STATEMENT: &str = "DELETE FROM training_entries WHERE exercise_id = ?1";
+
+        let mut statement = connection.prepare(DELETE_ENTRY_BY_EXERCISE_ID_SQL_STATEMENT).unwrap();
+        let entries =  self.find_entries_by_exercise_id(connection, exercise_id);
+        let entry_ids: Vec<&String> = entries.iter()
+            .map(|entry| &entry.id)
+            .collect();
+        for entry_id in entry_ids {
+            self.delete_sets_by_entry_id(connection, entry_id);
+        }
+        match statement.execute([exercise_id]) {
+            Ok(_) => info!("Delete sucessful"),
+            Err(err) => {
+                error!("Delete failed: {}", err);
+                error!("Statement: {}", statement.expanded_sql().unwrap());
+            },
+        }
+    }
 }
 
 pub trait TrainingOperations {
@@ -335,6 +436,7 @@ pub trait TrainingOperations {
     fn find_training(&self, id: &String) -> Training;
     fn add_training(&self, training: TrainingPatch);
     fn update_training(&self, training_id: &String, training: TrainingPatch);
+    fn delete_training(&self, id: &String);
 }
 
 impl TrainingOperations for Database {
@@ -427,6 +529,23 @@ impl TrainingOperations for Database {
             Err(err) => {
                 error!("Update failed: {}", err);
                 error!("Statement: {}", statement.expanded_sql().unwrap());
+            },
+        }
+    }
+
+    fn delete_training(&self, id: &String) {
+        const DELETE_TRAINING_SQL_STATEMENT: &str = "DELETE FROM trainings WHERE id = ?1";
+
+        let connection_guard = self.connection_arc_mutex.lock().unwrap();
+        let connection = connection_guard.deref();
+
+        self.delete_entries_by_training_id(connection, &id);
+        let mut statement = connection.prepare(DELETE_TRAINING_SQL_STATEMENT).unwrap();
+        match statement.execute([id]) {
+            Ok(_) => info!("Delete successful"),
+            Err(err) => {
+                error!("Delete failed: {}", err);
+                error!("Statement: {}", statement.expanded_sql().unwrap());    
             },
         }
     }

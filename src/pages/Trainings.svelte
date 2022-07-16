@@ -1,7 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { push } from "svelte-spa-router";
+    import DeleteTrainingModal from "../components/DeleteTrainingModal.svelte";
     import TrainingModal, { TrainingModalUtils } from "../components/TrainingModal.svelte";
+    import ModalUtils from "../util/ModalUtils";
     import sleep from "../util/sleep";
     import StringUtils from "../util/StringUtils";
     import TrainingService from "../util/TrainingService";
@@ -12,6 +14,7 @@
 
     const TRAINING_ADD_MODAL_ID = "training-add-modal";
     const TRAINING_EDIT_MODAL_ID = "training-edit-modal";
+    const TRAINING_DELETE_MODAL_ID = "training-delete-modal";
 
     onMount(async () => {
         trainings = await trainingService.getTrainings();
@@ -51,6 +54,11 @@
         TrainingModalUtils.openModal(TRAINING_EDIT_MODAL_ID);
     }
 
+    function openTrainingDeleteModal(id: string): void {
+        ModalUtils.setFormData(TRAINING_DELETE_MODAL_ID, "training-id", id);
+        ModalUtils.openModal(TRAINING_DELETE_MODAL_ID);
+    }
+
     async function onAddOk(data: TrainingPayload): Promise<void> {
         await trainingService.addTraining(data);
         trainings = await trainingService.getTrainings();
@@ -62,6 +70,11 @@
         trainings = await trainingService.getTrainings();
     }
 
+    async function onDeleteOk(id: string): Promise<void> {
+        await trainingService.deleteTraining(id);
+        trainings = await trainingService.getTrainings();
+    }
+
     function goToTrainingDetails(trainingId: string): void {
         push(`/trainings/details?id=${trainingId}`);
     }
@@ -69,6 +82,7 @@
 
 <TrainingModal mId={TRAINING_ADD_MODAL_ID} onOk={onAddOk} caption="Add training"/>
 <TrainingModal mId={TRAINING_EDIT_MODAL_ID} onOk={onEditOk} caption="Edit training"/>
+<DeleteTrainingModal mId={TRAINING_DELETE_MODAL_ID} onYes={onDeleteOk}/>
 
 <div class="w-full flex flex-col">
     <div class="flex grow p-2 bg-base-300">
@@ -87,6 +101,7 @@
             <div class="grow-0">
                 <button class="btn btn-secondary btn-sm" on:click={() => openTrainingEditModal(id)}>Edit</button>
                 <button class="btn btn-secondary btn-sm" on:click={() => goToTrainingDetails(id)}>Details</button>
+                <button class="btn btn-error btn-sm" on:click={() => openTrainingDeleteModal(id)}>Delete</button>
             </div>
         </div>
     {/each}
