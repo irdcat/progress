@@ -43,6 +43,13 @@ fn update_exercise(db_state: tauri::State<DatabaseState>, id: String, exercise: 
 }
 
 #[tauri::command]
+fn delete_exercise(db_state: tauri::State<DatabaseState>, id: String) {
+    info!("Invoking delete_exercise command with parameters: {{ id: {} }}", id);
+    let db = db_state.get_db();
+    db.delete_exercise(&id);
+}
+
+#[tauri::command]
 fn get_trainings(db_state: tauri::State<DatabaseState>) -> Vec<Training> {
     info!("Invoking get_trainings command");
     let db = db_state.get_db();
@@ -71,6 +78,13 @@ fn update_training(db_state: tauri::State<DatabaseState>, id: String, training: 
 }
 
 #[tauri::command]
+fn delete_training(db_state: tauri::State<DatabaseState>, id: String) {
+    info!("Invoking delete_training command with parameters: {{ id: {} }}", id);
+    let db = db_state.get_db();
+    db.delete_training(&id);
+}
+
+#[tauri::command]
 fn get_exercise_details(db_state: tauri::State<DatabaseState>, exercise_id: String) -> Vec<ExerciseDetails> {
     info!("Invoking get_exercise_details with parameters: {{ id: {} }}", exercise_id);
     let db = db_state.get_db();
@@ -88,8 +102,8 @@ fn main() {
             return Ok(());
         })
         .invoke_handler(tauri::generate_handler![
-            get_exercises, get_exercise, add_exercise, update_exercise,
-            get_trainings, get_training, add_training, update_training,
+            get_exercises, get_exercise, add_exercise, update_exercise, delete_exercise,
+            get_trainings, get_training, add_training, update_training, delete_training,
             get_exercise_details
             ])
         .run(tauri::generate_context!());
