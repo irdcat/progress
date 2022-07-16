@@ -3,6 +3,7 @@
     import { push } from "svelte-spa-router";
     import DeleteTrainingModal from "../components/DeleteTrainingModal.svelte";
     import TrainingModal, { TrainingModalUtils } from "../components/TrainingModal.svelte";
+    import ExerciseService from "../util/ExerciseService";
     import ModalUtils from "../util/ModalUtils";
     import sleep from "../util/sleep";
     import StringUtils from "../util/StringUtils";
@@ -10,15 +11,30 @@
     import type { Training, TrainingPayload } from "../util/types";
 
     let trainingService: TrainingService = new TrainingService();
+    let exerciseService: ExerciseService = new ExerciseService();
+    
     let trainings: Training[] = [];
+    let exerciseMap: Map<String, String> = new Map();
 
     const TRAINING_ADD_MODAL_ID = "training-add-modal";
     const TRAINING_EDIT_MODAL_ID = "training-edit-modal";
     const TRAINING_DELETE_MODAL_ID = "training-delete-modal";
 
     onMount(async () => {
+        let exercises = await exerciseService.getExercises();
+        for(const exercise of exercises) {
+            exerciseMap.set(exercise.id, exercise.name);
+        }
         trainings = await trainingService.getTrainings();
     });
+
+    function exercisesString(training: Training): string {
+        let result = "";
+        for(const [index, entry] of training.entries.entries()) {
+            result += exerciseMap.get(entry.exercise_id) + (index != training.entries.length - 1 ? ", " : "");
+        }
+        return result;
+    }
 
     function openTrainingAddModal(): void {
         TrainingModalUtils.openModal(TRAINING_ADD_MODAL_ID);
@@ -35,7 +51,7 @@
             TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "id", training.id);
             TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "year", dateParts[0]);
             TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "month", parseInt(dateParts[1]));
-            TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "day", dateParts[2]);
+            TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, "day", parseInt(dateParts[2]));
             for(const [entryIndex, entry] of training.entries.entries()) {
                 TrainingModalUtils.setFormData(TRAINING_EDIT_MODAL_ID, 
                     StringUtils.format("entry{0}-id", entryIndex), entry.id);
@@ -93,16 +109,43 @@
             <button class="btn btn-primary btn-sm" on:click={() => openTrainingAddModal()}>Add</button>
         </div>
     </div>
-    {#each trainings as {id, date}, index (id)}
-        <div class="flex grow p-2">
-            <p class="grow text-md font-normal">
-                {date}
-            </p>
-            <div class="grow-0">
-                <button class="btn btn-secondary btn-sm" on:click={() => openTrainingEditModal(id)}>Edit</button>
-                <button class="btn btn-secondary btn-sm" on:click={() => goToTrainingDetails(id)}>Details</button>
-                <button class="btn btn-error btn-sm" on:click={() => openTrainingDeleteModal(id)}>Delete</button>
-            </div>
-        </div>
-    {/each}
+    <table class="table w-full">
+        <thead>
+            <th>Date</th>
+            <th>Exercises</th>
+            <th><!-- Actions --></th>
+        </thead>
+        <tbody>
+            {#each trainings as training, index (training.id)}
+                <tr>
+                    <td>{training.date}</td>
+                    <td>{exercisesString(training)}</td>
+                    <td class="w-20">
+                        <div class="dropdown dropdown-end">
+                            <!-- svelte-ignore a11y-label-has-associated-control -->
+                            <label tabindex="0" class="btn btn-ghost btn-xs">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                                </svg>
+                            </label>
+                            <ul tabindex="0" class="dropdown-content p-2 menu shadow bg-base-100 rounded-box w-fit">
+                                <li on:click={() => openTrainingEditModal(training.id)}>
+                                    <!-- svelte-ignore a11y-missing-attribute -->
+                                    <a>Edit</a>
+                                </li>
+                                <li on:click={() => goToTrainingDetails(training.id)}>
+                                    <!-- svelte-ignore a11y-missing-attribute -->
+                                    <a>Details</a>
+                                </li>
+                                <li on:click={() => openTrainingDeleteModal(training.id)}>
+                                    <!-- svelte-ignore a11y-missing-attribute -->
+                                    <a class="hover:bg-red-700">Delete</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
 </div>

@@ -72,16 +72,47 @@
             <button class="btn btn-primary btn-sm" on:click={() => openExerciseAddModal()}>Add</button>
         </div>
     </div>
-    {#each exercises as {id, name}, index (id)}
-        <div class="flex grow p-2">
-            <p class="grow text-md font-normal">
-                {name}
-            </p>
-            <div class="grow-0">
-                <button class="btn btn-secondary btn-sm" on:click={() => openExerciseEditModal(id)}>Edit</button>
-                <button class="btn btn-secondary btn-sm" on:click={() => goToExerciseDetails(id)}>Details</button>
-                <button class="btn btn-error btn-sm" on:click={() => openExerciseDeleteModal(id)}>Delete</button>
-            </div>
-        </div>
-    {/each}
+    <table class="table w-full">
+        <thead>
+            <th>Name</th>
+            <th>Bodyweight</th>
+            <th>Unilateral</th>
+            <th>Double weight</th>
+            <th><!--actions--></th>
+        </thead>
+        <tbody>
+            {#each exercises as {id, name, unilateral, bodyweight, double_weight}, index (id)}
+                <tr>
+                    <td>{name}</td>
+                    <td>{bodyweight ? "Yes" : "No"}</td>
+                    <td>{unilateral ? "Yes" : "No"}</td>
+                    <td>{double_weight ? "Yes" : "No"}</td>
+                    <td class="w-20">
+                        <div class="dropdown dropdown-end">
+                            <!-- svelte-ignore a11y-label-has-associated-control -->
+                            <label tabindex="0" class="btn btn-ghost btn-xs">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                                    <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/>
+                                </svg>
+                            </label>
+                            <ul tabindex="0" class="dropdown-content p-2 menu shadow bg-base-100 rounded-box w-fit">
+                                <li on:click={() => openExerciseEditModal(id)}>
+                                    <!-- svelte-ignore a11y-missing-attribute -->
+                                    <a>Edit</a>
+                                </li>
+                                <li on:click={() => goToExerciseDetails(id)}>
+                                    <!-- svelte-ignore a11y-missing-attribute -->
+                                    <a>Details</a>
+                                </li>
+                                <li on:click={() => openExerciseDeleteModal(id)}>
+                                    <!-- svelte-ignore a11y-missing-attribute -->
+                                    <a class="hover:bg-red-700">Delete</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            {/each}
+        </tbody>
+    </table>
 </div>
