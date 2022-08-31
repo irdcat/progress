@@ -20,7 +20,7 @@
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "daisyui": "^2.19.0",
     "qs": "^6.11.0",
-    "rollup": "^2.77.0",
+    "rollup": "^2.79.0",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
     "rollup-plugin-svelte": "^7.0.0",
